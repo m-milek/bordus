@@ -24,6 +24,8 @@ export type Layout = z.infer<typeof LayoutSchema>
 
 export const ConfigSchema = z.object({
   title: z.string().optional(),
+  titleSize: z.string().optional(),
+  font: z.string().optional(),
   favicon: z.string().optional(),
   theme: z.enum(['light', 'dark', 'auto']).optional(),
   search: z.boolean().optional(),
@@ -44,7 +46,6 @@ export const loadConfig = async (): Promise<{ config: Config | null; error: stri
     const text = await res.text()
     const config = parseConfig(text)
     
-    // Side effects
     if (config.title) {
       document.title = config.title
     }

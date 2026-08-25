@@ -1,0 +1,9 @@
+services:
+  bordus:
+    build: .
+    container_name: bordus
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./public/config.yaml:/home/static/config.yaml:ro
+    restart: unless-stopped

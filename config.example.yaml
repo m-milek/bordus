@@ -1,0 +1,39 @@
+# Global Configuration
+title: "Homelab Dashboard"
+titleSize: "4rem" # Custom CSS font size for the title
+font: "Inter, sans-serif" # Set a custom CSS font-family
+favicon: "https://example.com/favicon.ico"
+theme: "auto" # Supported options: light, dark, auto
+search: true # Display the search bar
+
+# Layout Configuration
+layout:
+  columns: 3 # Number of category columns
+
+# Categories & Services
+categories:
+  - name: "Media"
+    color: "red" # Supported colors: red, blue, green, orange, purple, primary
+    icon: "film" # A valid lucide-react icon name, or a direct image URL
+    services:
+      - name: "Plex"
+        url: "http://plex.local"
+        icon: "plex" # A valid Homarr dashboard-icons name, or a direct image URL
+        description: "Movies and TV Shows"
+
+      - name: "Jellyfin"
+        url: "http://jellyfin.local"
+        icon: "jellyfin"
+
+  - name: "Network"
+    color: "blue"
+    icon: "network"
+    services:
+      - name: "Pi-hole"
+        url: "http://pi.hole"
+        icon: "pi-hole"
+        description: "Network-wide Ad Blocking"
+
+      - name: "Router"
+        url: "http://192.168.1.1"
+        icon: "https://example.com/custom-router-icon.png" # URL fallback

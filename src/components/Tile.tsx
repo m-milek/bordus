@@ -11,7 +11,7 @@ export const Tile = ({ service }: TileProps) => {
       href={service.url} 
       target="_blank" 
       rel="noopener noreferrer"
-      className="flex items-center gap-4 p-3 bg-background border border-border rounded-md hover:border-foreground transition-colors shadow-sm"
+      className="flex items-center gap-4 p-3 bg-background border border-transparent rounded-md hover:border-border transition-colors shadow-sm"
     >
       {service.icon ? (
         <ServiceIcon name={service.icon} className="w-10 h-10 object-contain" />

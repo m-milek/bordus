@@ -1,0 +1,55 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Start the Vite development server
+    cmds:
+      - npm run dev
+
+  build:
+    desc: Build the production static assets
+    cmds:
+      - npm run build
+
+  lint:
+    desc: Run ESLint
+    cmds:
+      - npm run lint
+
+  typecheck:
+    desc: Check TypeScript types without emitting files
+    cmds:
+      - npm run typecheck
+
+  test:
+    desc: Run unit tests with Vitest
+    cmds:
+      - npm run test
+
+  ci:
+    desc: Run all CI checks (lint, typecheck, test, build)
+    cmds:
+      - task: lint
+      - task: typecheck
+      - task: test
+      - task: build
+
+  docker:build:
+    desc: Build the Docker image
+    cmds:
+      - docker build -t bordus .
+
+  docker:up:
+    desc: Start the service using Docker Compose
+    cmds:
+      - docker compose up -d
+
+  docker:down:
+    desc: Stop the Docker Compose service
+    cmds:
+      - docker compose down
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf dist
