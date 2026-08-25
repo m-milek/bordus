@@ -24,7 +24,7 @@ services:
     image: ghcr.io/yourusername/bordus:latest
     container_name: bordus
     ports:
-      - "8080:8080"
+      - "1918:1918"
     volumes:
       - ./config.yaml:/home/static/config.yaml:ro
     restart: unless-stopped

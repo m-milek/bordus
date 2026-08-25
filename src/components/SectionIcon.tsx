@@ -15,7 +15,7 @@ export const SectionIcon = ({ name, className }: SectionIconProps) => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join('')
 
-  const IconComponent = LucideIcons[pascalName as keyof typeof LucideIcons]
+  const IconComponent = (LucideIcons as unknown as Record<string, React.ElementType>)[pascalName]
 
   if (!IconComponent) {
     return null
