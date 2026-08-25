@@ -1,61 +1,54 @@
-import { useEffect, useState } from 'react'
 import { parse } from 'yaml'
+import { z } from 'zod'
 
-export interface Service {
-  name: string
-  url: string
-  icon?: string
-  description?: string
+export const ServiceSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+  icon: z.string().optional(),
+  description: z.string().optional()
+})
+export type Service = z.infer<typeof ServiceSchema>
+
+export const CategorySchema = z.object({
+  name: z.string(),
+  color: z.string().optional(),
+  icon: z.string().optional(),
+  services: z.array(ServiceSchema)
+})
+export type Category = z.infer<typeof CategorySchema>
+
+export const LayoutSchema = z.object({
+  columns: z.number().optional()
+})
+export type Layout = z.infer<typeof LayoutSchema>
+
+export const ConfigSchema = z.object({
+  title: z.string().optional(),
+  favicon: z.string().optional(),
+  theme: z.enum(['light', 'dark', 'auto']).optional(),
+  search: z.boolean().optional(),
+  layout: LayoutSchema.optional(),
+  categories: z.array(CategorySchema).optional()
+})
+export type Config = z.infer<typeof ConfigSchema>
+
+export const parseConfig = (yamlString: string): Config => {
+  const parsed = parse(yamlString)
+  return ConfigSchema.parse(parsed)
 }
 
-export interface Category {
-  name: string
-  color?: string
-  icon?: string
-  services: Service[]
-}
-
-export interface Layout {
-  columns?: number
-}
-
-export interface Config {
-  title?: string
-  favicon?: string
-  theme?: 'light' | 'dark' | 'auto'
-  search?: boolean
-  layout?: Layout
-  categories?: Category[]
-}
-
-export const useConfig = () => {
-  const [config, setConfig] = useState<Config | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/config.yaml')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to load config.yaml')
-        return res.text()
-      })
-      .then(text => {
-        try {
-          const parsed = parse(text)
-          setConfig(parsed)
-        } catch (err: any) {
-          setError(`YAML Parse Error: ${err.message}`)
-        }
-      })
-      .catch(err => {
-        setError(err.message)
-      })
-  }, [])
-
-  useEffect(() => {
-    if (config?.title) {
+export const loadConfig = async (): Promise<{ config: Config | null; error: string | null }> => {
+  try {
+    const res = await fetch('/config.yaml')
+    if (!res.ok) throw new Error('Failed to load config.yaml')
+    const text = await res.text()
+    const config = parseConfig(text)
+    
+    // Side effects
+    if (config.title) {
       document.title = config.title
     }
-    if (config?.favicon) {
+    if (config.favicon) {
       let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement
       if (!link) {
         link = document.createElement('link')
@@ -64,7 +57,9 @@ export const useConfig = () => {
       }
       link.href = config.favicon
     }
-  }, [config])
-
-  return { config, error }
+    
+    return { config, error: null }
+  } catch (e: any) {
+    return { config: null, error: e.message }
+  }
 }
