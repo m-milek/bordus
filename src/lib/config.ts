@@ -60,7 +60,10 @@ export const loadConfig = async (): Promise<{ config: Config | null; error: stri
     }
     
     return { config, error: null }
-  } catch (e: any) {
-    return { config: null, error: e.message }
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      return { config: null, error: e.message }
+    }
+    return { config: null, error: 'An unknown error occurred while parsing the configuration.' }
   }
 }

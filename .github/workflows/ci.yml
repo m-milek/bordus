@@ -33,3 +33,9 @@ jobs:
 
       - name: Run CI tasks
         run: task ci
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: task docker:build
