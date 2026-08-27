@@ -50,8 +50,8 @@ export const TileGrid = ({ services, isEditMode = false, layouts, onLayoutChange
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
-        breakpoints={{ lg: 1200, md: 768, sm: 480, xs: 0 }}
-        cols={{ lg: 8, md: 6, sm: 4, xs: 2 }}
+        breakpoints={{ lg: 1200, md: 768, sm: 480, xs: 360, xxs: 0 }}
+        cols={{ lg: 8, md: 6, sm: 4, xs: 3, xxs: 3 }}
         rowHeight={dynamicRowHeight}
         isDraggable={isEditMode}
         isResizable={isEditMode}

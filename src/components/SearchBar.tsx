@@ -26,8 +26,17 @@ export const SearchBar = ({ value, onChange, onKeyDown, placeholder = "Search se
       }
     }
 
+    const handleWindowFocus = () => {
+      inputRef.current?.focus()
+    }
+
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('focus', handleWindowFocus)
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('focus', handleWindowFocus)
+    }
   }, [])
 
   return (

@@ -10,7 +10,7 @@ export interface SavedLayoutData {
 const STORAGE_KEY = 'bordus-grid-layout'
 
 const hashServices = (services: Service[]) => {
-  return services.map(s => s.name).join('|') + '|v11'
+  return services.map(s => s.name).join('|') + '|v13'
 }
 
 const generateDefaultLayout = (services: Service[]): ResponsiveLayouts => {
@@ -37,12 +37,19 @@ const generateDefaultLayout = (services: Service[]): ResponsiveLayouts => {
 
   const xs = services.map((service, i) => ({
     i: service.name,
-    x: (i % 2),
-    y: Math.floor(i / 2),
+    x: (i % 3),
+    y: Math.floor(i / 3),
     w: 1, h: 1, minW: 1, minH: 1
   }))
 
-  return { lg, md, sm, xs }
+  const xxs = services.map((service, i) => ({
+    i: service.name,
+    x: (i % 3),
+    y: Math.floor(i / 3),
+    w: 1, h: 1, minW: 1, minH: 1
+  }))
+
+  return { lg, md, sm, xs, xxs }
 }
 
 export const useGridLayout = (services: Service[]) => {
