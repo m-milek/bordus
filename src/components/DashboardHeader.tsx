@@ -1,22 +1,36 @@
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { SearchBar } from "@/components/SearchBar"
 
 export interface DashboardHeaderProps {
   title?: string
   titleSize?: string
+  searchProps?: {
+    value: string
+    onChange: (value: string) => void
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+    placeholder?: string
+  }
 }
 
-export const DashboardHeader = ({ title = 'Dashboard', titleSize }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ 
+  title = 'Dashboard', 
+  titleSize, 
+  searchProps
+}: DashboardHeaderProps) => {
   return (
-    <div className="grid grid-cols-3 items-center mb-10">
-      <div></div>
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
       <h1 
-        className={`font-bold text-center justify-self-center ${titleSize ? '' : 'text-3xl'}`}
+        className={`font-bold tracking-tight ${titleSize ? '' : 'text-3xl'}`}
         style={titleSize ? { fontSize: titleSize } : undefined}
       >
         {title}
       </h1>
-      <div className="justify-self-end">
-        <ThemeToggle />
+      
+      <div className="flex items-center gap-4 w-full sm:w-auto">
+        {searchProps && (
+          <div className="w-full sm:w-64">
+            <SearchBar {...searchProps} />
+          </div>
+        )}
       </div>
     </div>
   )

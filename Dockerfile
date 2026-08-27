@@ -7,17 +7,14 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Serve
-# Using busybox uclibc for an ultra-minimal ~1MB image
-FROM busybox:1.36.1-uclibc
+# Using nginx:alpine for static serving with caching headers
+FROM nginx:alpine
 
-# Run as a non-root user for security
-RUN adduser -D -H static
-USER static
-WORKDIR /home/static
+# Copy the custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy the minified static build from the builder stage
-COPY --from=builder /app/dist ./
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 1918
-# Run the built-in busybox httpd server
-CMD ["busybox", "httpd", "-f", "-v", "-p", "1918"]
+CMD ["nginx", "-g", "daemon off;"]

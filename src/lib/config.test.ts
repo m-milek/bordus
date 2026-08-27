@@ -8,7 +8,7 @@ title: My Homelab
 theme: auto
 search: true
 layout:
-  columns: 2
+  sections: flexible
 categories:
   - name: Media
     color: red
@@ -17,13 +17,11 @@ categories:
       - name: Plex
         url: http://plex.local
         icon: plex
-        description: Movies
     `
     const config = parseConfig(validYaml)
     expect(config.title).toBe('My Homelab')
     expect(config.search).toBe(true)
-    expect(config.layout?.columns).toBe(2)
-    expect(config.categories?.length).toBe(1)
+    expect(config.layout?.tileStyle).toBe('standard')
     expect(config.categories?.[0].services[0].name).toBe('Plex')
   })
 

@@ -1,13 +1,18 @@
+import { useState } from 'react'
 import * as LucideIcons from 'lucide-react'
 
-export interface SectionIconProps {
+export interface CategoryIconProps {
   name: string
   className?: string
 }
 
-export const SectionIcon = ({ name, className }: SectionIconProps) => {
+export const CategoryIcon = ({ name, className }: CategoryIconProps) => {
+  const [hasError, setHasError] = useState(false)
+
+  if (hasError) return null
+
   if (name.includes('/') || name.includes('.')) {
-    return <img src={name} alt="Section icon" className={className} />
+    return <img src={name} alt="Category icon" className={className} onError={() => setHasError(true)} />
   }
 
   const pascalName = name

@@ -13,6 +13,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 code {
   font-family:
     source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
@@ -175,6 +176,52 @@ code {
   --shadow: var(--shadow);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+}
+
+/* React Grid Layout Overrides */
+.react-grid-item.react-grid-placeholder {
+  background: var(--accent) !important;
+  border: 2px dashed var(--border) !important;
+  border-radius: var(--radius);
+  opacity: 0.4;
+  transition-duration: 100ms;
+  z-index: 2;
+  user-select: none;
+}
+
+.react-grid-item > .react-resizable-handle {
+  /* Ensure resize handles are visible when RGL renders them (which is only when isResizable=true) */
+  opacity: 0.8;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.react-grid-item > .react-resizable-handle:hover {
+  opacity: 1;
+}
+
+.drag-handle {
+  cursor: grab;
+  touch-action: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Custom Scrollbar for overflow areas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 10px;
+  opacity: 0.5;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground);
 }

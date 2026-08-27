@@ -1,30 +1,75 @@
-title: My Homelab
-favicon: /favicon.ico
-theme: auto
-search: true
+# Global Configuration
+title: "Homelab Dashboard"
+font: "Inter, sans-serif" # Set a custom CSS font-family
+favicon: "https://example.com/favicon.ico"
+theme: "auto" # Supported options: light, dark, auto
+search: true # Display the search bar
+searchPrompt: "Find an app..." # Customize the search placeholder
+
+# Layout Configuration
 layout:
-  columns: 2
+  tileStyle: "standard" # Options: standard, icon-only
+  tileSize: "medium" # Options: small, medium, large
+  padding: "medium" # Options: small, medium, large
+
+# Categories & Services
 categories:
-  - name: Media
-    color: red
-    icon: film
+  - name: "Media"
+    color: "blue"
+    icon: "play"
     services:
-      - name: Plex
-        url: http://plex.local
-        icon: plex
-        description: Movies & TV Shows
-      - name: Jellyfin
-        url: http://jellyfin.local
-        icon: jellyfin
-        description: Open source media server
-  - name: Network
-    color: blue
-    icon: network
+      - name: "Plex"
+        url: "http://plex.local:32400"
+        icon: "plex"
+      - name: "Jellyfin"
+        url: "http://jellyfin.local:8096"
+        icon: "jellyfin"
+
+  - name: "Downloads (Heavy Load)"
+    color: "green"
+    icon: "download"
     services:
-      - name: Pi-hole
-        url: http://pi.hole
-        icon: pi-hole
-        description: Network-wide ad blocking
-      - name: Router
-        url: http://192.168.1.1
-        icon: openwrt
+      - name: "qBittorrent"
+        url: "http://qbittorrent.local:8080"
+        icon: "qbittorrent"
+      - name: "Radarr"
+        url: "http://radarr.local:7878"
+        icon: "radarr"
+      - name: "Prowlarr"
+        url: "http://prowlarr.local:9696"
+        icon: "prowlarr"
+      - name: "SABnzbd"
+        url: "http://sabnzbd.local:8080"
+        icon: "sabnzbd"
+      - name: "Extremely Long Service Name For Testing Wrapping"
+        url: "http://example.local"
+        icon: "github"
+      - name: "Transmission"
+        url: "http://transmission.local:9091"
+        icon: "transmission"
+      - name: "Deluge"
+        url: "http://deluge.local:8112"
+        icon: "deluge"
+
+  - name: "Tiny Section"
+    color: "purple"
+    icon: "home"
+    services:
+      - name: "Home Assistant"
+        url: "http://homeassistant.local:8123"
+        icon: "home-assistant"
+
+  - name: "Edge Cases & Testing"
+    color: "red"
+    icon: "server"
+    services:
+      - name: "Missing Icon App"
+        url: "http://missing.local"
+      - name: "Unifi Network Controller"
+        url: "https://unifi.local:8443"
+        icon: "unifi"
+      - name: "Absolutely massive name that just keeps going on and on forever to test the absolute limits of the grid text wrapping"
+        url: "http://long.local"
+      - name: "Short"
+        url: "http://short.local"
+        icon: "docker"

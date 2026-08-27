@@ -4,8 +4,7 @@ import { z } from 'zod'
 export const ServiceSchema = z.object({
   name: z.string(),
   url: z.string(),
-  icon: z.string().optional(),
-  description: z.string().optional()
+  icon: z.string().optional()
 })
 export type Service = z.infer<typeof ServiceSchema>
 
@@ -18,7 +17,9 @@ export const CategorySchema = z.object({
 export type Category = z.infer<typeof CategorySchema>
 
 export const LayoutSchema = z.object({
-  columns: z.number().optional()
+  tileStyle: z.enum(['standard', 'icon-only']).optional().default('standard'),
+  padding: z.enum(['small', 'medium', 'large']).optional().default('medium'),
+  columns: z.number().int().positive().optional().default(12)
 })
 export type Layout = z.infer<typeof LayoutSchema>
 
@@ -28,8 +29,10 @@ export const ConfigSchema = z.object({
   font: z.string().optional(),
   favicon: z.string().optional(),
   theme: z.enum(['light', 'dark', 'auto']).optional(),
-  search: z.boolean().optional(),
-  layout: LayoutSchema.optional(),
+  search: z.boolean().optional().default(true),
+  searchPrompt: z.string().optional(),
+  layout: LayoutSchema.optional().default({ tileStyle: 'standard', padding: 'medium', columns: 12 }),
+  gridLayout: z.any().optional(),
   categories: z.array(CategorySchema).optional()
 })
 export type Config = z.infer<typeof ConfigSchema>
@@ -61,6 +64,10 @@ export const loadConfig = async (): Promise<{ config: Config | null; error: stri
     
     return { config, error: null }
   } catch (e: unknown) {
+    if (e instanceof z.ZodError) {
+      const issues = e.issues.map((err: z.ZodIssue) => `${err.path.join('.')}: ${err.message}`).join(', ')
+      return { config: null, error: `Config validation failed: ${issues}` }
+    }
     if (e instanceof Error) {
       return { config: null, error: e.message }
     }
