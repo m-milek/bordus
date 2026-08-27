@@ -3,8 +3,10 @@ import { z } from 'zod'
 
 export const ServiceSchema = z.object({
   name: z.string(),
-  url: z.string(),
-  icon: z.string().optional()
+  url: z.string().url(),
+  icon: z.string().optional(),
+  categoryName: z.string().optional(),
+  categoryColor: z.string().optional()
 })
 export type Service = z.infer<typeof ServiceSchema>
 
@@ -16,13 +18,6 @@ export const CategorySchema = z.object({
 })
 export type Category = z.infer<typeof CategorySchema>
 
-export const LayoutSchema = z.object({
-  tileStyle: z.enum(['standard', 'icon-only']).optional().default('standard'),
-  padding: z.enum(['small', 'medium', 'large']).optional().default('medium'),
-  columns: z.number().int().positive().optional().default(12)
-})
-export type Layout = z.infer<typeof LayoutSchema>
-
 export const ConfigSchema = z.object({
   title: z.string().optional(),
   titleSize: z.string().optional(),
@@ -31,7 +26,6 @@ export const ConfigSchema = z.object({
   theme: z.enum(['light', 'dark', 'auto']).optional(),
   search: z.boolean().optional().default(true),
   searchPrompt: z.string().optional(),
-  layout: LayoutSchema.optional().default({ tileStyle: 'standard', padding: 'medium', columns: 12 }),
   gridLayout: z.any().optional(),
   categories: z.array(CategorySchema).optional()
 })

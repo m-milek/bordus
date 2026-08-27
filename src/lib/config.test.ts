@@ -7,8 +7,6 @@ describe('parseConfig', () => {
 title: My Homelab
 theme: auto
 search: true
-layout:
-  sections: flexible
 categories:
   - name: Media
     color: red
@@ -21,7 +19,6 @@ categories:
     const config = parseConfig(validYaml)
     expect(config.title).toBe('My Homelab')
     expect(config.search).toBe(true)
-    expect(config.layout?.tileStyle).toBe('standard')
     expect(config.categories?.[0].services[0].name).toBe('Plex')
   })
 

@@ -6,11 +6,6 @@ theme: "auto" # Supported options: light, dark, auto
 search: true # Display the search bar
 searchPrompt: "Find an app..." # Customize the search placeholder
 
-# Layout Configuration
-layout:
-  tileStyle: "standard" # Options: standard, icon-only
-  padding: "medium" # Options: small, medium, large
-  columns: 12 # Grid columns for the dashboard
 
 # Categories & Services
 categories:

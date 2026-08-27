@@ -15,3 +15,18 @@ export const getColorClasses = (colorName?: string) => {
 
   return colors[colorName.toLowerCase()] || "bg-transparent border-border"
 }
+
+export const getSolidColorClasses = (colorName?: string) => {
+  if (!colorName) return "bg-muted text-muted-foreground"
+  
+  const colors: Record<string, string> = {
+    red: "bg-red-500 text-white",
+    blue: "bg-blue-500 text-white",
+    green: "bg-green-500 text-white",
+    orange: "bg-orange-500 text-white",
+    purple: "bg-purple-500 text-white",
+    primary: "bg-primary text-primary-foreground",
+  }
+
+  return colors[colorName.toLowerCase()] || "bg-muted text-muted-foreground"
+}
