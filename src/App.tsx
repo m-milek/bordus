@@ -1,22 +1,30 @@
-import { useState } from 'react'
-import { Config } from "@/lib/config"
+import { useState, useEffect } from 'react'
+import { Config, loadConfig } from "@/lib/config"
 import { DashboardHeader } from "@/components/DashboardHeader"
-import { ErrorBanner } from "@/components/ErrorBanner"
 import { TileGrid } from "@/components/TileGrid"
 import { SettingsWidget } from "@/components/SettingsWidget"
 import { useFilteredServices } from "@/hooks/useFilteredServices"
 import { useGridLayout } from "@/hooks/useGridLayout"
 
-export interface AppProps {
-  config: Config | null
-  error: string | null
-}
-
-export const App = ({ config: initialConfig, error }: AppProps) => {
-  const config = initialConfig
+export const App = () => {
+  const [config, setConfig] = useState<Config | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
   
+  // Use state to throw async errors into the React render cycle
+  const [error, setError] = useState<Error | null>(null)
+
+  useEffect(() => {
+    loadConfig()
+      .then(setConfig)
+      .catch(setError)
+  }, [])
+
+  // Throw to ErrorBoundary
+  if (error) {
+    throw error
+  }
+
   const filteredServices = useFilteredServices(config?.categories, searchQuery)
   const { layouts, onLayoutChange, resetLayout, isCustomized } = useGridLayout(filteredServices)
 
@@ -48,7 +56,6 @@ export const App = ({ config: initialConfig, error }: AppProps) => {
             placeholder: config.searchPrompt
           } : undefined}
         />
-        {error && <ErrorBanner error={error} />}
         <TileGrid 
           services={filteredServices} 
           isEditMode={isEditMode}

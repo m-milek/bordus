@@ -19,7 +19,7 @@ export const useFilteredServices = (categories: Category[] | undefined, searchQu
 
     const fuse = new Fuse(allServices, {
       keys: ['name', 'url', 'categoryName'],
-      threshold: 0.4,
+      threshold: 0.25,
     })
     
     const results = fuse.search(searchQuery)
