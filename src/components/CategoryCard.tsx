@@ -94,10 +94,14 @@ export const CategoryCard = ({
 
       <div
         className="absolute z-20 -translate-y-1/2"
-        style={{ top: 0, left: 20 - PAD }}
+        // The card's left edge is at -PAD; sit the pill 20px in from there, and
+        // cap its width so a long title stays 20px clear of the right edge too
+        // (card width is innerWidth + 2*PAD) rather than spilling onto the
+        // neighbouring card's border.
+        style={{ top: 0, left: -PAD + 20, maxWidth: innerWidth + 2 * PAD - 40 }}
       >
         <div
-          className={`flex items-center justify-center gap-1.5 rounded-full px-3 shadow-sm ${getSolidColorClasses(
+          className={`flex min-w-0 items-center justify-center gap-1.5 rounded-full px-3 shadow-sm ${getSolidColorClasses(
             category.color
           )} ${isEditMode ? "category-drag-handle cursor-grab active:cursor-grabbing" : ""}`}
           // The card's top band is sized from this, so it cannot be left to
@@ -110,7 +114,7 @@ export const CategoryCard = ({
               className="h-3.5 w-3.5 shrink-0"
             />
           )}
-          <span className="text-xs leading-none font-semibold whitespace-nowrap">
+          <span className="truncate text-xs leading-none font-semibold whitespace-nowrap">
             {category.name}
           </span>
         </div>

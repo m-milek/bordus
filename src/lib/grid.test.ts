@@ -21,7 +21,7 @@ describe("cellSize", () => {
     const cols = 8
     const expected = (containerWidth - GAP * (cols - 1) - PAGE_PAD * 2) / cols
     expect(cellSize(containerWidth, cols)).toBe(expected)
-    expect(cellSize(containerWidth, cols)).toBeCloseTo(113.5, 5)
+    expect(cellSize(containerWidth, cols)).toBeCloseTo(110, 5)
   })
 
   it("leaves no leftover width once gutters and padding are accounted for", () => {
@@ -154,6 +154,6 @@ describe("breakpointForWidth / colsForWidth", () => {
   it("gives a phone two columns rather than three", () => {
     // A 390px phone leaves a 358px container after the page padding.
     expect(colsForWidth(358)).toBe(2)
-    expect(cellSize(358, 2)).toBeCloseTo(149, 0)
+    expect(cellSize(358, 2)).toBeCloseTo(147, 0)
   })
 })

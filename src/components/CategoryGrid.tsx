@@ -14,7 +14,6 @@ import {
   COLS,
   GAP,
   PAGE_PAD,
-  ROW_UNIT,
   breakpointForWidth,
   cellSize,
   colsForWidth,
@@ -128,10 +127,10 @@ export const CategoryGrid = ({
           layouts={layouts}
           breakpoints={BREAKPOINTS}
           cols={COLS}
-          rowHeight={ROW_UNIT}
-          // A vertical margin of zero lets category heights be exact pixel
-          // values; the gap between stacked categories is baked into the
-          // bottom of each item instead.
+          // A 1px row unit plus a vertical margin of zero lets category heights
+          // be exact pixel values; the gap between stacked categories is baked
+          // into the bottom of each item instead.
+          rowHeight={1}
           margin={[GAP, 0]}
           containerPadding={[PAGE_PAD, PAGE_PAD]}
           constraints={constraints}

@@ -252,7 +252,7 @@ body {
  */
 .category-item.react-grid-item > .react-resizable-handle.react-resizable-handle-se {
   right: -12px; /* PAD */
-  bottom: 12px; /* CAT_GAP */
+  bottom: 16px; /* CAT_GAP */
 }
 
 /* The title pill and the card overhang the item box, so nothing may clip. */

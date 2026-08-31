@@ -11,6 +11,7 @@ import {
   BREAKPOINT_NAMES,
   COLS,
   GAP,
+  PAD,
   PAGE_PAD,
   cellSize,
   colsForWidth,
@@ -59,13 +60,13 @@ export const SearchResultsGrid = ({ services }: SearchResultsGridProps) => {
           cols={COLS}
           rowHeight={cellSize(width, colsForWidth(width))}
           margin={[GAP, GAP]}
-          containerPadding={[PAGE_PAD, PAGE_PAD]}
+          containerPadding={[PAGE_PAD, PAGE_PAD + PAD]}
           dragConfig={{ enabled: false }}
           resizeConfig={{ enabled: false }}
         >
           {services.map((service) => (
             <div key={service.name} className="relative">
-              <Tile service={service} />
+              <Tile service={service} variant="search" />
             </div>
           ))}
         </ResponsiveGridLayout>
