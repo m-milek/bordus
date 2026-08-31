@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as LucideIcons from 'lucide-react'
+import { CATEGORY_ICONS } from '@/lib/categoryIcons'
 
 export interface CategoryIconProps {
   name: string
@@ -15,12 +15,7 @@ export const CategoryIcon = ({ name, className }: CategoryIconProps) => {
     return <img src={name} alt="Category icon" className={className} onError={() => setHasError(true)} />
   }
 
-  const pascalName = name
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('')
-
-  const IconComponent = (LucideIcons as unknown as Record<string, React.ElementType>)[pascalName]
+  const IconComponent = CATEGORY_ICONS[name.toLowerCase()]
 
   if (!IconComponent) {
     return null

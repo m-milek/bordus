@@ -113,20 +113,45 @@ describe('breakpointForWidth / colsForWidth', () => {
     expect(colsForWidth(1184)).toBe(8)
   })
 
-  it('switches breakpoint strictly above the threshold', () => {
-    expect(breakpointForWidth(1101)).toBe('lg')
-    expect(breakpointForWidth(1100)).toBe('md')
-    expect(breakpointForWidth(769)).toBe('md')
-    expect(breakpointForWidth(768)).toBe('sm')
-    expect(breakpointForWidth(480)).toBe('xs')
-    expect(breakpointForWidth(360)).toBe('xxs')
+  it('keeps tiles a usable size at every width, thresholds included', () => {
+    /*
+     * Tiles are smallest just above a threshold, where the column count has
+     * gone up but the container has not, so walking every width is what catches
+     * a threshold that hands a phone too many columns.
+     *
+     * The bounds are deliberately lopsided. Going from two columns to three is
+     * a 50% step, and at phone widths there is no threshold that avoids both
+     * overshooting on two and undershooting on three -- so the floor is strict
+     * and the ceiling is loose. An oversized tile on a phone is a big tap
+     * target; an undersized one is the illegible label this ladder exists to
+     * prevent.
+     */
+    const tooSmall: string[] = []
+    const tooLarge: string[] = []
+
+    for (let width = 300; width <= 1184; width++) {
+      const cell = cellSize(width, colsForWidth(width))
+      if (cell < 105) tooSmall.push(`${width}px -> ${cell.toFixed(0)}px`)
+      if (cell > 190) tooLarge.push(`${width}px -> ${cell.toFixed(0)}px`)
+    }
+
+    expect(tooSmall).toEqual([])
+    expect(tooLarge).toEqual([])
   })
 
-  it('maps each breakpoint to its column count', () => {
-    expect(colsForWidth(1184)).toBe(8)
-    expect(colsForWidth(900)).toBe(6)
-    expect(colsForWidth(600)).toBe(4)
-    expect(colsForWidth(400)).toBe(3)
-    expect(colsForWidth(320)).toBe(3)
+  it('switches breakpoint strictly above the threshold', () => {
+    expect(breakpointForWidth(1151)).toBe('lg')
+    expect(breakpointForWidth(1150)).toBe('md')
+    expect(breakpointForWidth(861)).toBe('md')
+    expect(breakpointForWidth(860)).toBe('sm')
+    expect(breakpointForWidth(571)).toBe('sm')
+    expect(breakpointForWidth(431)).toBe('xs')
+    expect(breakpointForWidth(430)).toBe('xxs')
+  })
+
+  it('gives a phone two columns rather than three', () => {
+    // A 390px phone leaves a 358px container after the page padding.
+    expect(colsForWidth(358)).toBe(2)
+    expect(cellSize(358, 2)).toBeCloseTo(149, 0)
   })
 })

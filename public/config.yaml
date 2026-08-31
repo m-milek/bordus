@@ -1,6 +1,6 @@
 # Global Configuration
 title: "Homelab Dashboard"
-font: "Roboto, sans-serif" # Set a custom CSS font-family
+# font: "Inter, sans-serif" # Optional: any CSS font-family your browser can resolve
 favicon: "https://example.com/favicon.ico"
 theme: "auto" # Supported options: light, dark, auto
 search: true # Display the search bar
@@ -103,7 +103,7 @@ categories:
 
   - name: "Networking"
     color: "indigo"
-    icon: "network-wired"
+    icon: "network"
     services:
       - name: "Unifi Network Controller"
         url: "https://unifi.local:8443"

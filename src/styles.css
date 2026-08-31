@@ -4,11 +4,41 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Reserve the scrollbar gutter, always.
+ *
+ * Tiles are square and sized from the container width, so the height of the
+ * whole page is roughly proportional to that width. That closes a feedback
+ * loop with the scrollbar: the page overflows, a scrollbar appears and takes
+ * ~15px of width, every tile shrinks, the page gets shorter, the scrollbar is
+ * no longer needed, it goes away and the width comes back. On the example
+ * config that loop is reachable at 865 of the 1241 window widths between 360px
+ * and 1600px, with up to a 173px band of window heights that never settles --
+ * the whole grid flickers because every tile really is being resized each pass.
+ *
+ * Reserving the gutter makes the container width independent of how tall the
+ * content is, which breaks the loop at its source.
+ */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* scrollbar-gutter is Safari 18.2+; this reserves the same space without it. */
+@supports not (scrollbar-gutter: stable) {
+  html {
+    overflow-y: scroll;
+  }
+}
+
 body {
   @apply m-0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /*
+   * System fonts only. A webfont means a DNS lookup, a TLS handshake and a
+   * render-blocking stylesheet before any text appears, which is the most
+   * visible delay there is on a new-tab page. Set `font:` in config.yaml to
+   * override.
+   */
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -52,7 +82,7 @@ code {
   --sidebar-accent-foreground: rgb(60, 66, 76);
   --sidebar-border: rgb(211, 213, 217);
   --sidebar-ring: rgb(124, 126, 216);
-  --font-sans: Inter, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   --font-serif: Merriweather, serif;
   --font-mono: JetBrains Mono, monospace;
   --radius: 1.6rem;
@@ -107,7 +137,7 @@ code {
   --sidebar-accent-foreground: rgb(211, 213, 217);
   --sidebar-border: rgb(79, 86, 95);
   --sidebar-ring: rgb(150, 157, 227);
-  --font-sans: Inter, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   --font-serif: Merriweather, serif;
   --font-mono: JetBrains Mono, monospace;
   --radius: 1.6rem;

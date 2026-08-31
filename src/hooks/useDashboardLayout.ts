@@ -12,7 +12,7 @@ const STORAGE_KEY = 'bordus-grid-layout'
 const VERSION = 'v14'
 
 /** Default category width in tile columns, per breakpoint. */
-const DEFAULT_WIDTH: Record<BreakpointName, number> = { lg: 4, md: 3, sm: 4, xs: 3, xxs: 3 }
+const DEFAULT_WIDTH: Record<BreakpointName, number> = { lg: 4, md: 3, sm: 4, xs: 3, xxs: 2 }
 /** Categories taller than this scroll by default rather than growing the page. */
 const MAX_DEFAULT_ROWS = 3
 /**

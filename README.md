@@ -5,8 +5,8 @@ Bordus is a lightweight, static dashboard designed for homelabs and personal sta
 ## Features
 
 - Static Configuration: Everything is defined in a single `config.yaml` file. No backend or database required.
-- Instant Loading: The application parses its configuration before React mounts, ensuring zero layout shift and instant rendering.
-- Tiny Footprint: Provided as a multi-stage Docker image using BusyBox. The final image size is roughly 2MB.
+- Instant Loading: No webfonts and no external requests on the critical path. The config request starts while the document is still parsing, so it arrives alongside the bundle rather than a round trip after it.
+- Tiny Footprint: Built as a multi-stage Docker image served by nginx. Assets are precompressed at build time and served with `gzip_static`.
 - Live Updates: When using Docker, the configuration file is mounted as a volume. Changes to the YAML file reflect instantly upon page refresh without rebuilding the container.
 - Categories: Services are grouped into categories, each a single resizable element on the grid with a coloured frame and a floating title pill. Frames are drawn into the gutter between tiles, so a tile sits the same distance from its neighbour whether or not they share a category.
 - Search: Includes a built-in search bar to filter services by name or description.
@@ -27,7 +27,7 @@ services:
     ports:
       - "1918:1918"
     volumes:
-      - ./config.yaml:/home/static/config.yaml:ro
+      - ./config.yaml:/usr/share/nginx/html/config.yaml:ro
     restart: unless-stopped
 ```
 

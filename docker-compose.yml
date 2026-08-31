@@ -5,5 +5,5 @@ services:
     ports:
       - "1918:1918"
     volumes:
-      - ./public/config.yaml:/home/static/config.yaml:ro
+      - ./config.yaml:/usr/share/nginx/html/config.yaml:ro
     restart: unless-stopped

@@ -45,8 +45,16 @@ export const PAGE_PAD = 12
 /** Row height of the outer grid, in pixels. */
 export const ROW_UNIT = 1
 
-export const BREAKPOINTS = { lg: 1100, md: 768, sm: 480, xs: 360, xxs: 0 } as const
-export const COLS = { lg: 8, md: 6, sm: 4, xs: 3, xxs: 3 } as const
+/*
+ * Each column count takes over at the width where it starts producing tiles of
+ * a usable size, rather than at a round number borrowed from a device. Solving
+ * `container = cols * (cell + GAP) - PAGE_PAD * 2` for a cell between 110 and
+ * 160 px gives the ranges these thresholds sit at the bottom of, which keeps a
+ * tile inside that band at every width -- including just above a threshold,
+ * where tiles are always at their smallest.
+ */
+export const BREAKPOINTS = { lg: 1150, md: 860, sm: 570, xs: 430, xxs: 0 } as const
+export const COLS = { lg: 8, md: 6, sm: 4, xs: 3, xxs: 2 } as const
 
 export type BreakpointName = keyof typeof COLS
 

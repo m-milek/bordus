@@ -14,6 +14,17 @@ describe('Tile Component', () => {
   })
 
 
+  it('draws its hover outline inside itself, where nothing can clip it', () => {
+    // Tiles sit flush against their category's scrolling viewport, so an
+    // outward ring is cut off on whichever edges touch it -- leaving an outline
+    // on two sides and not the other two.
+    render(<Tile service={{ name: 'Plex', url: 'http://plex.local' }} />)
+
+    const surface = screen.getByText('Plex').closest('a')!.firstElementChild!
+    expect(surface.className).toContain('hover:inset-ring')
+    expect(surface.className).not.toMatch(/(^|\s)hover:ring-/)
+  })
+
   it('falls back to initials if icon is not provided', () => {
     const service = {
       name: 'Fallback Service',

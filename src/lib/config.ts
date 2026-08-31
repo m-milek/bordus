@@ -87,11 +87,24 @@ export const parseConfig = (yamlString: string): Config => {
   return ConfigSchema.parse(parsed)
 }
 
-export const loadConfig = async (): Promise<Config> => {
+declare global {
+  interface Window {
+    /** The config request index.html starts during document parse. */
+    __bordusConfig?: Promise<string>
+  }
+}
+
+const fetchConfigText = async (): Promise<string> => {
+  const started = typeof window === 'undefined' ? undefined : window.__bordusConfig
+  if (started) return started
+
   const res = await fetch('/config.yaml')
   if (!res.ok) throw new Error('Failed to load config.yaml')
-  const text = await res.text()
-  const config = parseConfig(text)
+  return res.text()
+}
+
+export const loadConfig = async (): Promise<Config> => {
+  const config = parseConfig(await fetchConfigText())
   
   if (config.title) {
     document.title = config.title
