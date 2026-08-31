@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from "vitest"
 import {
   CAT_GAP,
   GAP,
@@ -13,10 +13,10 @@ import {
   hFromRows,
   rowsFromH,
   wholeTileRows,
-} from './grid'
+} from "./grid"
 
-describe('cellSize', () => {
-  it('spends the container on cells, gutters and the page padding alone', () => {
+describe("cellSize", () => {
+  it("spends the container on cells, gutters and the page padding alone", () => {
     const containerWidth = 1184
     const cols = 8
     const expected = (containerWidth - GAP * (cols - 1) - PAGE_PAD * 2) / cols
@@ -24,7 +24,7 @@ describe('cellSize', () => {
     expect(cellSize(containerWidth, cols)).toBeCloseTo(113.5, 5)
   })
 
-  it('leaves no leftover width once gutters and padding are accounted for', () => {
+  it("leaves no leftover width once gutters and padding are accounted for", () => {
     const containerWidth = 900
     const cols = 6
     const cell = cellSize(containerWidth, cols)
@@ -32,14 +32,14 @@ describe('cellSize', () => {
   })
 })
 
-describe('the gutter budget', () => {
-  it('pads a category equally on all four sides', () => {
+describe("the gutter budget", () => {
+  it("pads a category equally on all four sides", () => {
     // The top gets no extra: the pill straddles the border, so its overhang is
     // exactly the top padding rather than something added on top of it.
     expect(PAD).toBe(PILL_HEIGHT / 2)
   })
 
-  it('splits evenly between the two frames it holds and the space between them', () => {
+  it("splits evenly between the two frames it holds and the space between them", () => {
     // A category's frame is drawn into the gutter rather than padding its tiles
     // inward, so this is what keeps a tile the same distance from its neighbour
     // whether or not they share a category.
@@ -48,18 +48,18 @@ describe('the gutter budget', () => {
   })
 })
 
-describe('blockSize', () => {
-  it('counts one fewer gutter than cells', () => {
+describe("blockSize", () => {
+  it("counts one fewer gutter than cells", () => {
     expect(blockSize(1, 100)).toBe(100)
     expect(blockSize(2, 100)).toBe(200 + GAP)
     expect(blockSize(4, 134.5)).toBe(4 * 134.5 + 3 * GAP)
   })
 })
 
-describe('hFromRows / rowsFromH', () => {
+describe("hFromRows / rowsFromH", () => {
   const cells = [96, 120, 134.5, 150, 183.333]
 
-  it('round-trips every row count', () => {
+  it("round-trips every row count", () => {
     for (const cell of cells) {
       for (let rows = 1; rows <= 10; rows++) {
         expect(rowsFromH(hFromRows(rows, cell), cell)).toBe(rows)
@@ -67,7 +67,7 @@ describe('hFromRows / rowsFromH', () => {
     }
   })
 
-  it('snaps an in-between height to the nearest whole row', () => {
+  it("snaps an in-between height to the nearest whole row", () => {
     const cell = 134.5
     const two = hFromRows(2, cell)
     const three = hFromRows(3, cell)
@@ -76,26 +76,28 @@ describe('hFromRows / rowsFromH', () => {
     expect(rowsFromH(Math.round((two + three) / 2) - 1, cell)).toBe(2)
   })
 
-  it('never returns fewer than one row', () => {
+  it("never returns fewer than one row", () => {
     expect(rowsFromH(0, 134.5)).toBe(1)
     expect(rowsFromH(-500, 134.5)).toBe(1)
   })
 
-  it('leaves exactly the card height plus the gap strip', () => {
+  it("leaves exactly the card height plus the gap strip", () => {
     const cell = 134.5
     const rows = 3
-    expect(hFromRows(rows, cell)).toBe(Math.round(categoryHeightPx(rows, cell) + CAT_GAP))
+    expect(hFromRows(rows, cell)).toBe(
+      Math.round(categoryHeightPx(rows, cell) + CAT_GAP)
+    )
   })
 })
 
-describe('wholeTileRows constraint', () => {
-  it('snaps a proposed height to a valid row count and leaves width alone', () => {
+describe("wholeTileRows constraint", () => {
+  it("snaps a proposed height to a valid row count and leaves width alone", () => {
     const cell = 134.5
     const { constrainSize } = wholeTileRows(cell)
-    const item = { i: 'Media', x: 0, y: 0, w: 4, h: 100 }
+    const item = { i: "Media", x: 0, y: 0, w: 4, h: 100 }
     const proposed = hFromRows(2, cell) + 30
 
-    const result = constrainSize!(item, 4, proposed, 'se', {
+    const result = constrainSize!(item, 4, proposed, "se", {
       cols: 8,
       maxRows: Infinity,
     } as never)
@@ -106,14 +108,14 @@ describe('wholeTileRows constraint', () => {
   })
 })
 
-describe('breakpointForWidth / colsForWidth', () => {
-  it('makes the 8-column layout reachable at the real container width', () => {
+describe("breakpointForWidth / colsForWidth", () => {
+  it("makes the 8-column layout reachable at the real container width", () => {
     // max-w-7xl (1280) minus md:p-12 (2 x 48) is the widest the grid ever gets.
-    expect(breakpointForWidth(1184)).toBe('lg')
+    expect(breakpointForWidth(1184)).toBe("lg")
     expect(colsForWidth(1184)).toBe(8)
   })
 
-  it('keeps tiles a usable size at every width, thresholds included', () => {
+  it("keeps tiles a usable size at every width, thresholds included", () => {
     /*
      * Tiles are smallest just above a threshold, where the column count has
      * gone up but the container has not, so walking every width is what catches
@@ -139,17 +141,17 @@ describe('breakpointForWidth / colsForWidth', () => {
     expect(tooLarge).toEqual([])
   })
 
-  it('switches breakpoint strictly above the threshold', () => {
-    expect(breakpointForWidth(1151)).toBe('lg')
-    expect(breakpointForWidth(1150)).toBe('md')
-    expect(breakpointForWidth(861)).toBe('md')
-    expect(breakpointForWidth(860)).toBe('sm')
-    expect(breakpointForWidth(571)).toBe('sm')
-    expect(breakpointForWidth(431)).toBe('xs')
-    expect(breakpointForWidth(430)).toBe('xxs')
+  it("switches breakpoint strictly above the threshold", () => {
+    expect(breakpointForWidth(1151)).toBe("lg")
+    expect(breakpointForWidth(1150)).toBe("md")
+    expect(breakpointForWidth(861)).toBe("md")
+    expect(breakpointForWidth(860)).toBe("sm")
+    expect(breakpointForWidth(571)).toBe("sm")
+    expect(breakpointForWidth(431)).toBe("xs")
+    expect(breakpointForWidth(430)).toBe("xxs")
   })
 
-  it('gives a phone two columns rather than three', () => {
+  it("gives a phone two columns rather than three", () => {
     // A 390px phone leaves a 358px container after the page padding.
     expect(colsForWidth(358)).toBe(2)
     expect(cellSize(358, 2)).toBeCloseTo(149, 0)

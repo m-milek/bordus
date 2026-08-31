@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { parseConfig } from './config'
+import { describe, it, expect } from "vitest"
+import { parseConfig } from "./config"
 
-describe('parseConfig', () => {
-  it('parses a valid configuration', () => {
+describe("parseConfig", () => {
+  it("parses a valid configuration", () => {
     const validYaml = `
 title: My Homelab
 theme: auto
@@ -17,12 +17,12 @@ categories:
         icon: plex
     `
     const config = parseConfig(validYaml)
-    expect(config.title).toBe('My Homelab')
+    expect(config.title).toBe("My Homelab")
     expect(config.search).toBe(true)
-    expect(config.categories?.[0].services[0].name).toBe('Plex')
+    expect(config.categories?.[0].services[0].name).toBe("Plex")
   })
 
-  it('throws an error when parsing an invalid schema', () => {
+  it("throws an error when parsing an invalid schema", () => {
     const invalidYaml = `
 categories:
   - name: Media
@@ -32,7 +32,7 @@ categories:
     expect(() => parseConfig(invalidYaml)).toThrow()
   })
 
-  it('throws an error on invalid YAML syntax', () => {
+  it("throws an error on invalid YAML syntax", () => {
     const invalidSyntax = `
 categories:
   - name: [Unclosed bracket
@@ -40,13 +40,13 @@ categories:
     expect(() => parseConfig(invalidSyntax)).toThrow()
   })
 
-  it('parses empty or minimal configuration correctly', () => {
-    const config = parseConfig('title: Minimal')
-    expect(config.title).toBe('Minimal')
+  it("parses empty or minimal configuration correctly", () => {
+    const config = parseConfig("title: Minimal")
+    expect(config.title).toBe("Minimal")
     expect(config.categories).toBeUndefined()
   })
 
-  it('parses category sizing keys', () => {
+  it("parses category sizing keys", () => {
     const config = parseConfig(`
 categories:
   - name: Media
@@ -66,7 +66,7 @@ categories:
     expect(category?.layout?.md).toEqual({ w: 3 })
   })
 
-  it('rejects a fractional category width', () => {
+  it("rejects a fractional category width", () => {
     expect(() =>
       parseConfig(`
 categories:
@@ -79,7 +79,7 @@ categories:
     ).toThrow()
   })
 
-  it('parses an exported gridLayout block', () => {
+  it("parses an exported gridLayout block", () => {
     const config = parseConfig(`
 gridLayout:
   categories:
@@ -98,16 +98,16 @@ categories:
     `)
     expect(config.gridLayout?.categories?.lg).toHaveLength(2)
     expect(config.gridLayout?.categories?.lg?.[1]).toEqual({
-      i: 'Downloads',
+      i: "Downloads",
       x: 4,
       y: 0,
       w: 4,
-      rows: 1
+      rows: 1,
     })
-    expect(config.gridLayout?.tiles?.Media?.lg?.[0].i).toBe('Plex')
+    expect(config.gridLayout?.tiles?.Media?.lg?.[0].i).toBe("Plex")
   })
 
-  it('rejects a gridLayout entry that stores a pixel height instead of rows', () => {
+  it("rejects a gridLayout entry that stores a pixel height instead of rows", () => {
     expect(() =>
       parseConfig(`
 gridLayout:

@@ -3,7 +3,7 @@ import {
   ResponsiveGridLayout,
   useContainerWidth,
   type Layout,
-  type ResponsiveLayouts
+  type ResponsiveLayouts,
 } from "react-grid-layout"
 import { gridBounds, minMaxSize } from "react-grid-layout/core"
 import { Category, CategoryPlacement, TilePlacement } from "@/lib/config"
@@ -20,16 +20,22 @@ import {
   colsForWidth,
   hFromRows,
   rowsFromH,
-  wholeTileRows
+  wholeTileRows,
 } from "@/lib/grid"
-import type { CategoryPlacements, TilePlacements } from "@/hooks/useDashboardLayout"
+import type {
+  CategoryPlacements,
+  TilePlacements,
+} from "@/hooks/useDashboardLayout"
 
 export interface CategoryGridProps {
   categories?: Category[]
   placements: CategoryPlacements
   tiles: TilePlacements
   isEditMode?: boolean
-  onCategoryLayoutChange?: (breakpoint: BreakpointName, placements: CategoryPlacement[]) => void
+  onCategoryLayoutChange?: (
+    breakpoint: BreakpointName,
+    placements: CategoryPlacement[]
+  ) => void
   onTileLayoutChange?: (
     categoryName: string,
     breakpoint: BreakpointName,
@@ -43,10 +49,12 @@ export const CategoryGrid = ({
   tiles,
   isEditMode = false,
   onCategoryLayoutChange,
-  onTileLayoutChange
+  onTileLayoutChange,
 }: CategoryGridProps) => {
   // Measure before the first paint so the grid never renders at a guessed width.
-  const { width, mounted, containerRef } = useContainerWidth({ measureBeforeMount: true })
+  const { width, mounted, containerRef } = useContainerWidth({
+    measureBeforeMount: true,
+  })
 
   const breakpoint = breakpointForWidth(width)
   const cols = colsForWidth(width)
@@ -55,8 +63,8 @@ export const CategoryGrid = ({
   // Only categories that have a placement at this breakpoint are rendered, so
   // the children and the layout can never disagree.
   const visible = useMemo(() => {
-    const byName = new Map((placements[breakpoint] ?? []).map(p => [p.i, p]))
-    return (categories ?? []).flatMap(category => {
+    const byName = new Map((placements[breakpoint] ?? []).map((p) => [p.i, p]))
+    return (categories ?? []).flatMap((category) => {
       const placement = byName.get(category.name)
       return placement ? [{ category, placement }] : []
     })
@@ -76,8 +84,8 @@ export const CategoryGrid = ({
         y,
         w,
         h: hFromRows(rows, cell),
-        minW: 1
-      }))
+        minW: 1,
+      })),
     }),
     [visible, breakpoint, cell]
   )
@@ -96,7 +104,13 @@ export const CategoryGrid = ({
     if (!onCategoryLayoutChange || layout.length === 0) return
     onCategoryLayoutChange(
       breakpoint,
-      layout.map(({ i, x, y, w, h }) => ({ i, x, y, w, rows: rowsFromH(h, cell) }))
+      layout.map(({ i, x, y, w, h }) => ({
+        i,
+        x,
+        y,
+        w,
+        rows: rowsFromH(h, cell),
+      }))
     )
   }
 
@@ -105,7 +119,7 @@ export const CategoryGrid = ({
   return (
     <div
       ref={containerRef}
-      className={`w-full min-h-[500px] ${isEditMode ? "" : "grid-locked"}`}
+      className={`min-h-[500px] w-full ${isEditMode ? "" : "grid-locked"}`}
     >
       {mounted && width > 0 && (
         <ResponsiveGridLayout
@@ -124,7 +138,7 @@ export const CategoryGrid = ({
           dragConfig={{
             enabled: isEditMode,
             handle: ".category-drag-handle",
-            cancel: ".category-body"
+            cancel: ".category-body",
           }}
           resizeConfig={{ enabled: isEditMode }}
           onDragStop={handleGestureEnd}
@@ -139,7 +153,7 @@ export const CategoryGrid = ({
                 cell={cell}
                 tiles={tiles[category.name]?.[breakpoint] ?? []}
                 isEditMode={isEditMode}
-                onTilesChange={next =>
+                onTilesChange={(next) =>
                   onTileLayoutChange?.(category.name, breakpoint, next)
                 }
               />

@@ -32,36 +32,46 @@ export const CategoryCard = ({
   cell,
   tiles,
   isEditMode = false,
-  onTilesChange
+  onTilesChange,
 }: CategoryCardProps) => {
   // Tiles take their tint from the category, matching the card's own colour.
   const services = useMemo(
     () =>
       new Map(
-        category.services.map(service => [
+        category.services.map((service) => [
           service.name,
-          { ...service, categoryName: category.name, categoryColor: category.color }
+          {
+            ...service,
+            categoryName: category.name,
+            categoryColor: category.color,
+          },
         ])
       ),
     [category.services, category.name, category.color]
   )
 
   const placed = useMemo(
-    () => tiles.filter(tile => services.has(tile.i)),
+    () => tiles.filter((tile) => services.has(tile.i)),
     [tiles, services]
   )
 
   // The tile block is exactly as wide as the category's grid item box, which is
   // what keeps tiles on the page-wide grid: no padding is subtracted first.
   const innerWidth = blockSize(width, cell)
-  const totalRows = Math.max(rows, ...placed.map(tile => tile.y + tile.h), 1)
+  const totalRows = Math.max(rows, ...placed.map((tile) => tile.y + tile.h), 1)
   const viewportHeight = blockSize(rows, cell)
   const isScrollable = totalRows > rows
   const canScroll = isScrollable && !isEditMode
 
   const layout = useMemo<Layout>(
     () =>
-      placed.map(tile => ({ ...tile, minW: 1, minH: 1, maxW: width, maxH: totalRows })),
+      placed.map((tile) => ({
+        ...tile,
+        minW: 1,
+        minH: 1,
+        maxW: width,
+        maxH: totalRows,
+      })),
     [placed, width, totalRows]
   )
 
@@ -78,7 +88,7 @@ export const CategoryCard = ({
           left: -PAD,
           right: -PAD,
           top: 0,
-          height: categoryHeightPx(rows, cell)
+          height: categoryHeightPx(rows, cell),
         }}
       />
 
@@ -94,7 +104,12 @@ export const CategoryCard = ({
           // whatever the text and padding happen to add up to.
           style={{ height: PILL_HEIGHT }}
         >
-          {category.icon && <CategoryIcon name={category.icon} className="h-3.5 w-3.5 shrink-0" />}
+          {category.icon && (
+            <CategoryIcon
+              name={category.icon}
+              className="h-3.5 w-3.5 shrink-0"
+            />
+          )}
           <span className="text-xs leading-none font-semibold whitespace-nowrap">
             {category.name}
           </span>
@@ -104,7 +119,9 @@ export const CategoryCard = ({
       <div
         className={`category-body absolute z-10 overflow-x-hidden ${
           // Nothing to scroll to when every tile is already on screen.
-          isScrollable ? "overflow-y-auto overscroll-contain" : "overflow-y-hidden"
+          isScrollable
+            ? "overflow-y-auto overscroll-contain"
+            : "overflow-y-hidden"
         }`}
         style={{
           left: 0,
@@ -112,7 +129,7 @@ export const CategoryCard = ({
           top: PAD,
           height: viewportHeight,
           // Mandatory snapping would fight a tile drag, so it is off while editing.
-          scrollSnapType: canScroll ? "y mandatory" : undefined
+          scrollSnapType: canScroll ? "y mandatory" : undefined,
         }}
       >
         {/*
@@ -139,7 +156,7 @@ export const CategoryCard = ({
             cols: width,
             rowHeight: cell,
             margin: [GAP, GAP],
-            containerPadding: [0, 0]
+            containerPadding: [0, 0],
           }}
           // Tiles flow in reading order, so reordering shifts its neighbours
           // along rather than pushing one onto a row of its own.
@@ -149,7 +166,7 @@ export const CategoryCard = ({
           onDragStop={handleGestureEnd}
           onResizeStop={handleGestureEnd}
         >
-          {placed.map(tile => {
+          {placed.map((tile) => {
             const service = services.get(tile.i)!
             return (
               <div key={tile.i} className="group/tile relative">

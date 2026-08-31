@@ -1,4 +1,4 @@
-import { Service } from '@/lib/config'
+import { Service } from "@/lib/config"
 import { ServiceIcon } from "@/components/ServiceIcon"
 import { getTileColorClasses } from "@/lib/colors"
 
@@ -28,11 +28,11 @@ export const Tile = ({ service }: TileProps) => {
       */}
       <div
         className={`@container flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl p-2 transition-shadow duration-200 hover:inset-ring hover:inset-ring-foreground/15 ${colorClasses}`}
-        style={{ containerType: 'inline-size' }}
+        style={{ containerType: "inline-size" }}
       >
         <div className="flex min-h-0 w-full flex-1 items-center justify-center">
           <ServiceIcon
-            name={service.icon || ''}
+            name={service.icon || ""}
             className="h-[60%] w-[60%] object-contain transition-transform duration-300 group-hover:scale-110"
             fallback={
               <div className="flex aspect-square h-[60%] w-[60%] items-center justify-center rounded-xl bg-background text-[20cqi] font-bold text-muted-foreground transition-transform duration-300 group-hover:scale-110">
@@ -48,7 +48,7 @@ export const Tile = ({ service }: TileProps) => {
             are smallest -- exactly backwards. The clamp holds the label in a
             15.2-17.6px band at every tile size.
           */}
-          <span className="w-full text-center text-[clamp(0.95rem,11cqi,1.1rem)] leading-tight font-medium break-words text-foreground line-clamp-2">
+          <span className="line-clamp-2 w-full text-center text-[clamp(0.95rem,11cqi,1.1rem)] leading-tight font-medium break-words text-foreground">
             {service.name}
           </span>
         </div>

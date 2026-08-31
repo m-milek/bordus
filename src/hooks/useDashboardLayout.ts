@@ -1,18 +1,24 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from "react"
 import {
   Category,
   CategoryPlacement,
   DashboardLayout,
   DashboardLayoutSchema,
-  TilePlacement
-} from '@/lib/config'
-import { BREAKPOINT_NAMES, BreakpointName, COLS } from '@/lib/grid'
+  TilePlacement,
+} from "@/lib/config"
+import { BREAKPOINT_NAMES, BreakpointName, COLS } from "@/lib/grid"
 
-const STORAGE_KEY = 'bordus-grid-layout'
-const VERSION = 'v14'
+const STORAGE_KEY = "bordus-grid-layout"
+const VERSION = "v14"
 
 /** Default category width in tile columns, per breakpoint. */
-const DEFAULT_WIDTH: Record<BreakpointName, number> = { lg: 4, md: 3, sm: 4, xs: 3, xxs: 2 }
+const DEFAULT_WIDTH: Record<BreakpointName, number> = {
+  lg: 4,
+  md: 3,
+  sm: 4,
+  xs: 3,
+  xxs: 2,
+}
 /** Categories taller than this scroll by default rather than growing the page. */
 const MAX_DEFAULT_ROWS = 3
 /**
@@ -22,8 +28,13 @@ const MAX_DEFAULT_ROWS = 3
  */
 const Y_STRIDE = 1000
 
-export type CategoryPlacements = Partial<Record<BreakpointName, CategoryPlacement[]>>
-export type TilePlacements = Record<string, Partial<Record<BreakpointName, TilePlacement[]>>>
+export type CategoryPlacements = Partial<
+  Record<BreakpointName, CategoryPlacement[]>
+>
+export type TilePlacements = Record<
+  string,
+  Partial<Record<BreakpointName, TilePlacement[]>>
+>
 
 export interface DashboardLayoutState {
   categories: CategoryPlacements
@@ -34,8 +45,9 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
 
 const hashCategories = (categories: Category[]) =>
-  categories.map(cat => `${cat.name}:${cat.services.map(s => s.name).join(',')}`).join('|') +
-  `|${VERSION}`
+  categories
+    .map((cat) => `${cat.name}:${cat.services.map((s) => s.name).join(",")}`)
+    .join("|") + `|${VERSION}`
 
 const defaultTiles = (category: Category, width: number): TilePlacement[] =>
   category.services.map((service, i) => ({
@@ -43,7 +55,7 @@ const defaultTiles = (category: Category, width: number): TilePlacement[] =>
     x: i % width,
     y: Math.floor(i / width),
     w: 1,
-    h: 1
+    h: 1,
   }))
 
 const generateDefaults = (categories: Category[]): DashboardLayoutState => {
@@ -59,7 +71,7 @@ const generateDefaults = (categories: Category[]): DashboardLayoutState => {
     let cursorX = 0
     let cursorRow = 0
 
-    placements[breakpoint] = categories.map(category => {
+    placements[breakpoint] = categories.map((category) => {
       const override = category.layout?.[breakpoint]
       const width = clamp(
         override?.w ?? category.w ?? DEFAULT_WIDTH[breakpoint],
@@ -81,7 +93,13 @@ const generateDefaults = (categories: Category[]): DashboardLayoutState => {
 
       tiles[category.name][breakpoint] = defaultTiles(category, width)
 
-      return { i: category.name, x: clamp(x, 0, cols - width), y, w: width, rows }
+      return {
+        i: category.name,
+        x: clamp(x, 0, cols - width),
+        y,
+        w: width,
+        rows,
+      }
     })
   }
 
@@ -100,10 +118,10 @@ const applyOverride = (
 ): DashboardLayoutState => {
   if (!override) return base
 
-  const known = new Set(categories.map(c => c.name))
+  const known = new Set(categories.map((c) => c.name))
   const merged: DashboardLayoutState = {
     categories: { ...base.categories },
-    tiles: { ...base.tiles }
+    tiles: { ...base.tiles },
   }
 
   for (const breakpoint of BREAKPOINT_NAMES) {
@@ -111,50 +129,58 @@ const applyOverride = (
     if (!saved) continue
 
     const cols = COLS[breakpoint]
-    const byName = new Map(saved.filter(p => known.has(p.i)).map(p => [p.i, p]))
+    const byName = new Map(
+      saved.filter((p) => known.has(p.i)).map((p) => [p.i, p])
+    )
 
-    merged.categories[breakpoint] = (base.categories[breakpoint] ?? []).map(fallback => {
-      const placement = byName.get(fallback.i)
-      if (!placement) return fallback
-      const w = clamp(placement.w, 1, cols)
-      return {
-        i: fallback.i,
-        x: clamp(placement.x, 0, cols - w),
-        y: placement.y,
-        w,
-        rows: Math.max(1, placement.rows)
+    merged.categories[breakpoint] = (base.categories[breakpoint] ?? []).map(
+      (fallback) => {
+        const placement = byName.get(fallback.i)
+        if (!placement) return fallback
+        const w = clamp(placement.w, 1, cols)
+        return {
+          i: fallback.i,
+          x: clamp(placement.x, 0, cols - w),
+          y: placement.y,
+          w,
+          rows: Math.max(1, placement.rows),
+        }
       }
-    })
+    )
   }
 
   for (const category of categories) {
     const savedTiles = override.tiles?.[category.name]
     if (!savedTiles) continue
 
-    const serviceNames = new Set(category.services.map(s => s.name))
+    const serviceNames = new Set(category.services.map((s) => s.name))
     for (const breakpoint of BREAKPOINT_NAMES) {
       const saved = savedTiles[breakpoint]
       if (!saved) continue
 
       const categoryWidth =
-        merged.categories[breakpoint]?.find(p => p.i === category.name)?.w ??
+        merged.categories[breakpoint]?.find((p) => p.i === category.name)?.w ??
         DEFAULT_WIDTH[breakpoint]
-      const byName = new Map(saved.filter(p => serviceNames.has(p.i)).map(p => [p.i, p]))
+      const byName = new Map(
+        saved.filter((p) => serviceNames.has(p.i)).map((p) => [p.i, p])
+      )
 
       merged.tiles[category.name] = {
         ...merged.tiles[category.name],
-        [breakpoint]: (base.tiles[category.name]?.[breakpoint] ?? []).map(fallback => {
-          const placement = byName.get(fallback.i)
-          if (!placement) return fallback
-          const w = clamp(placement.w, 1, categoryWidth)
-          return {
-            i: fallback.i,
-            x: clamp(placement.x, 0, categoryWidth - w),
-            y: placement.y,
-            w,
-            h: Math.max(1, placement.h)
+        [breakpoint]: (base.tiles[category.name]?.[breakpoint] ?? []).map(
+          (fallback) => {
+            const placement = byName.get(fallback.i)
+            if (!placement) return fallback
+            const w = clamp(placement.w, 1, categoryWidth)
+            return {
+              i: fallback.i,
+              x: clamp(placement.x, 0, categoryWidth - w),
+              y: placement.y,
+              w,
+              h: Math.max(1, placement.h),
+            }
           }
-        })
+        ),
       }
     }
   }
@@ -185,7 +211,7 @@ const buildLayout = (
   const saved = readSaved(hash)
   return {
     layout: saved ? applyOverride(fromConfig, saved, categories) : fromConfig,
-    isCustomized: saved !== null
+    isCustomized: saved !== null,
   }
 }
 
@@ -193,11 +219,17 @@ export const useDashboardLayout = (
   categories: Category[] | undefined,
   configLayout: DashboardLayout | undefined
 ) => {
-  const hash = useMemo(() => (categories ? hashCategories(categories) : ''), [categories])
+  const hash = useMemo(
+    () => (categories ? hashCategories(categories) : ""),
+    [categories]
+  )
   const [state, setState] = useState(() =>
     categories
       ? buildLayout(categories, configLayout, hash)
-      : { layout: { categories: {}, tiles: {} } as DashboardLayoutState, isCustomized: false }
+      : {
+          layout: { categories: {}, tiles: {} } as DashboardLayoutState,
+          isCustomized: false,
+        }
   )
   const [lastHash, setLastHash] = useState(hash)
 
@@ -220,10 +252,13 @@ export const useDashboardLayout = (
 
   const onCategoryLayoutChange = useCallback(
     (breakpoint: BreakpointName, placements: CategoryPlacement[]) => {
-      setState(previous => {
+      setState((previous) => {
         const layout: DashboardLayoutState = {
           ...previous.layout,
-          categories: { ...previous.layout.categories, [breakpoint]: placements }
+          categories: {
+            ...previous.layout.categories,
+            [breakpoint]: placements,
+          },
         }
         persist(layout)
         return { layout, isCustomized: true }
@@ -233,17 +268,21 @@ export const useDashboardLayout = (
   )
 
   const onTileLayoutChange = useCallback(
-    (categoryName: string, breakpoint: BreakpointName, placements: TilePlacement[]) => {
-      setState(previous => {
+    (
+      categoryName: string,
+      breakpoint: BreakpointName,
+      placements: TilePlacement[]
+    ) => {
+      setState((previous) => {
         const layout: DashboardLayoutState = {
           ...previous.layout,
           tiles: {
             ...previous.layout.tiles,
             [categoryName]: {
               ...previous.layout.tiles[categoryName],
-              [breakpoint]: placements
-            }
-          }
+              [breakpoint]: placements,
+            },
+          },
         }
         persist(layout)
         return { layout, isCustomized: true }
@@ -258,7 +297,7 @@ export const useDashboardLayout = (
     const defaults = generateDefaults(categories)
     setState({
       layout: applyOverride(defaults, configLayout, categories),
-      isCustomized: false
+      isCustomized: false,
     })
   }, [categories, configLayout])
 
@@ -267,6 +306,6 @@ export const useDashboardLayout = (
     isCustomized: state.isCustomized,
     onCategoryLayoutChange,
     onTileLayoutChange,
-    resetLayout
+    resetLayout,
   }
 }

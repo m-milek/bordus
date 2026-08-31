@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import type Fuse from 'fuse.js'
+import { useEffect, useMemo, useState } from "react"
+import type Fuse from "fuse.js"
 import { Category, Service } from "@/lib/config"
 
 type FuseCtor = typeof Fuse
@@ -12,27 +12,31 @@ type FuseCtor = typeof Fuse
 let fusePromise: Promise<FuseCtor> | null = null
 
 const loadFuse = () => {
-  fusePromise ??= import('fuse.js').then(module => module.default)
+  fusePromise ??= import("fuse.js").then((module) => module.default)
   return fusePromise
 }
 
 const substringMatch = (services: Service[], query: string) => {
   const needle = query.toLowerCase()
-  return services.filter(service =>
-    service.name.toLowerCase().includes(needle) ||
-    service.url.toLowerCase().includes(needle) ||
-    service.categoryName?.toLowerCase().includes(needle)
+  return services.filter(
+    (service) =>
+      service.name.toLowerCase().includes(needle) ||
+      service.url.toLowerCase().includes(needle) ||
+      service.categoryName?.toLowerCase().includes(needle)
   )
 }
 
-export const useFilteredServices = (categories: Category[] | undefined, searchQuery: string): Service[] => {
+export const useFilteredServices = (
+  categories: Category[] | undefined,
+  searchQuery: string
+): Service[] => {
   const [FuseClass, setFuseClass] = useState<FuseCtor | null>(null)
-  const isSearching = searchQuery.trim() !== ''
+  const isSearching = searchQuery.trim() !== ""
 
   useEffect(() => {
     if (!isSearching || FuseClass) return
     let active = true
-    loadFuse().then(loaded => {
+    loadFuse().then((loaded) => {
       if (active) setFuseClass(() => loaded)
     })
     return () => {
@@ -42,11 +46,11 @@ export const useFilteredServices = (categories: Category[] | undefined, searchQu
 
   const allServices = useMemo(
     () =>
-      (categories ?? []).flatMap(category =>
-        category.services.map(service => ({
+      (categories ?? []).flatMap((category) =>
+        category.services.map((service) => ({
           ...service,
           categoryName: category.name,
-          categoryColor: category.color
+          categoryColor: category.color,
         }))
       ),
     [categories]
@@ -57,10 +61,10 @@ export const useFilteredServices = (categories: Category[] | undefined, searchQu
     if (!FuseClass) return substringMatch(allServices, searchQuery)
 
     const fuse = new FuseClass(allServices, {
-      keys: ['name', 'url', 'categoryName'],
+      keys: ["name", "url", "categoryName"],
       threshold: 0.25,
     })
 
-    return fuse.search(searchQuery).map(result => result.item)
+    return fuse.search(searchQuery).map((result) => result.item)
   }, [allServices, searchQuery, isSearching, FuseClass])
 }

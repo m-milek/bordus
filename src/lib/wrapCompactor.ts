@@ -1,5 +1,8 @@
-import { cloneLayoutItem, sortLayoutItemsByRowCol } from 'react-grid-layout/core'
-import type { Compactor, Layout, LayoutItem } from 'react-grid-layout/core'
+import {
+  cloneLayoutItem,
+  sortLayoutItemsByRowCol,
+} from "react-grid-layout/core"
+import type { Compactor, Layout, LayoutItem } from "react-grid-layout/core"
 
 /**
  * Packs a layout densely in reading order, the way text wraps.
@@ -15,7 +18,13 @@ import type { Compactor, Layout, LayoutItem } from 'react-grid-layout/core'
  * Items are visited in their current visual order, which is what makes a drag
  * read as an insertion at the position you dropped on.
  */
-const fits = (occupied: boolean[][], x: number, y: number, w: number, h: number) => {
+const fits = (
+  occupied: boolean[][],
+  x: number,
+  y: number,
+  w: number,
+  h: number
+) => {
   for (let row = y; row < y + h; row++) {
     for (let col = x; col < x + w; col++) {
       if (occupied[row]?.[col]) return false
@@ -24,14 +33,24 @@ const fits = (occupied: boolean[][], x: number, y: number, w: number, h: number)
   return true
 }
 
-const occupy = (occupied: boolean[][], x: number, y: number, w: number, h: number) => {
+const occupy = (
+  occupied: boolean[][],
+  x: number,
+  y: number,
+  w: number,
+  h: number
+) => {
   for (let row = y; row < y + h; row++) {
     occupied[row] ??= []
     for (let col = x; col < x + w; col++) occupied[row][col] = true
   }
 }
 
-const firstFreeSlot = (occupied: boolean[][], cols: number, item: LayoutItem) => {
+const firstFreeSlot = (
+  occupied: boolean[][],
+  cols: number,
+  item: LayoutItem
+) => {
   const w = Math.min(item.w, cols)
   for (let y = 0; ; y++) {
     for (let x = 0; x + w <= cols; x++) {
@@ -41,7 +60,7 @@ const firstFreeSlot = (occupied: boolean[][], cols: number, item: LayoutItem) =>
 }
 
 export const wrapCompactor: Compactor = {
-  type: 'wrap',
+  type: "wrap",
   allowOverlap: false,
   compact(layout: Layout, cols: number): Layout {
     const occupied: boolean[][] = []
@@ -67,5 +86,5 @@ export const wrapCompactor: Compactor = {
     }
 
     return out
-  }
+  },
 }

@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import {
   ResponsiveGridLayout,
   useContainerWidth,
-  type ResponsiveLayouts
+  type ResponsiveLayouts,
 } from "react-grid-layout"
 import { Service } from "@/lib/config"
 import { Tile } from "@/components/Tile"
@@ -13,7 +13,7 @@ import {
   GAP,
   PAGE_PAD,
   cellSize,
-  colsForWidth
+  colsForWidth,
 } from "@/lib/grid"
 
 export interface SearchResultsGridProps {
@@ -27,7 +27,9 @@ export interface SearchResultsGridProps {
  */
 export const SearchResultsGrid = ({ services }: SearchResultsGridProps) => {
   // Measure before the first paint so the grid never renders at a guessed width.
-  const { width, mounted, containerRef } = useContainerWidth({ measureBeforeMount: true })
+  const { width, mounted, containerRef } = useContainerWidth({
+    measureBeforeMount: true,
+  })
 
   const layouts = useMemo<ResponsiveLayouts>(() => {
     const result: ResponsiveLayouts = {}
@@ -38,7 +40,7 @@ export const SearchResultsGrid = ({ services }: SearchResultsGridProps) => {
         x: i % cols,
         y: Math.floor(i / cols),
         w: 1,
-        h: 1
+        h: 1,
       }))
     }
     return result
@@ -47,7 +49,7 @@ export const SearchResultsGrid = ({ services }: SearchResultsGridProps) => {
   if (!services || services.length === 0) return null
 
   return (
-    <div ref={containerRef} className="w-full min-h-[500px] grid-locked">
+    <div ref={containerRef} className="grid-locked min-h-[500px] w-full">
       {mounted && width > 0 && (
         <ResponsiveGridLayout
           className="layout"
@@ -61,7 +63,7 @@ export const SearchResultsGrid = ({ services }: SearchResultsGridProps) => {
           dragConfig={{ enabled: false }}
           resizeConfig={{ enabled: false }}
         >
-          {services.map(service => (
+          {services.map((service) => (
             <div key={service.name} className="relative">
               <Tile service={service} />
             </div>

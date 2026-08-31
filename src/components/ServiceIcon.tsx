@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState } from "react"
+import { isImageRef } from "@/lib/categoryIcons"
 
 export interface ServiceIconProps {
   name: string
@@ -6,13 +7,16 @@ export interface ServiceIconProps {
   fallback?: React.ReactNode
 }
 
-export const ServiceIcon = ({ name, className, fallback }: ServiceIconProps) => {
+export const ServiceIcon = ({
+  name,
+  className,
+  fallback,
+}: ServiceIconProps) => {
   const [hasError, setHasError] = useState(false)
 
-  let iconSrc = name
-  if (!name.includes('/') && !name.includes('.')) {
-    iconSrc = `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${name}.png`
-  }
+  const iconSrc = isImageRef(name)
+    ? name
+    : `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${name}.png`
 
   if (hasError || !name) {
     if (fallback) return <>{fallback}</>
@@ -20,11 +24,11 @@ export const ServiceIcon = ({ name, className, fallback }: ServiceIconProps) => 
   }
 
   return (
-    <img 
-      src={iconSrc} 
-      alt={`${name} icon`} 
+    <img
+      src={iconSrc}
+      alt={`${name} icon`}
       className={className}
-      onError={() => setHasError(true)} 
+      onError={() => setHasError(true)}
     />
   )
 }

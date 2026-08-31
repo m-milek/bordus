@@ -1,57 +1,54 @@
-import { Component, ErrorInfo, ReactNode } from "react";
-import { ZodError } from "zod";
+import { Component, ErrorInfo, ReactNode } from "react"
+import { ZodError } from "zod"
 
 interface Props {
-  children?: ReactNode;
+  children?: ReactNode
 }
 
 interface State {
-  hasError: boolean;
-  error: Error | null;
+  error: Error | null
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false,
-    error: null
-  };
+  state: State = { error: null }
 
-  public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+  static getDerivedStateFromError(error: Error): State {
+    return { error }
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo)
   }
 
-  public render() {
-    if (this.state.hasError) {
-      const error = this.state.error;
-      let errorMessage = error?.message;
+  render() {
+    const { error } = this.state
+    if (!error) return this.props.children
 
-      // Pretty print Zod errors if it's a validation error bubbling up
-      if (error instanceof ZodError) {
-        errorMessage = error.issues.map(err => `${err.path.join('.')}: ${err.message}`).join(', ');
-      }
+    // A Zod failure bubbling up is a bad config.yaml; show which fields.
+    const message =
+      error instanceof ZodError
+        ? error.issues
+            .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+            .join(", ")
+        : error.message || "Unknown error"
 
-      return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-8 font-sans">
-          <div className="max-w-xl w-full bg-destructive/10 border border-destructive/20 rounded-xl p-8 shadow-lg">
-            <h1 className="text-2xl font-bold text-destructive mb-4">Something went wrong</h1>
-            <p className="text-destructive/80 mb-6 font-mono text-sm break-words whitespace-pre-wrap">
-              {errorMessage || "Unknown error"}
-            </p>
-            <button
-              className="px-4 py-2 bg-destructive text-destructive-foreground rounded-md font-medium hover:bg-destructive/90 transition-colors"
-              onClick={() => window.location.reload()}
-            >
-              Reload Page
-            </button>
-          </div>
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background p-8 font-sans text-foreground">
+        <div className="w-full max-w-xl rounded-xl border border-destructive/20 bg-destructive/10 p-8 shadow-lg">
+          <h1 className="mb-4 text-2xl font-bold text-destructive">
+            Something went wrong
+          </h1>
+          <p className="mb-6 font-mono text-sm break-words whitespace-pre-wrap text-destructive/80">
+            {message}
+          </p>
+          <button
+            className="rounded-md bg-destructive px-4 py-2 font-medium text-destructive-foreground transition-colors hover:bg-destructive/90"
+            onClick={() => window.location.reload()}
+          >
+            Reload Page
+          </button>
         </div>
-      );
-    }
-
-    return this.props.children;
+      </div>
+    )
   }
 }

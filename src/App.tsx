@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react"
 import { Config, loadConfig } from "@/lib/config"
 import { DashboardHeader } from "@/components/DashboardHeader"
 import { CategoryGrid } from "@/components/CategoryGrid"
@@ -9,60 +9,70 @@ import { useDashboardLayout } from "@/hooks/useDashboardLayout"
 
 export const App = () => {
   const [config, setConfig] = useState<Config | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState("")
   const [isEditMode, setIsEditMode] = useState(false)
-  
-  // Use state to throw async errors into the React render cycle
+
+  // A failed config load has to reach the ErrorBoundary, which only catches
+  // errors thrown during render -- not from a promise callback.
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    loadConfig()
-      .then(setConfig)
-      .catch(setError)
+    loadConfig().then(setConfig).catch(setError)
   }, [])
 
-  // Throw to ErrorBoundary
   if (error) {
     throw error
   }
 
-  const isSearching = searchQuery.trim() !== ''
+  const isSearching = searchQuery.trim() !== ""
   const searchResults = useFilteredServices(config?.categories, searchQuery)
   const {
     layout,
     isCustomized,
     onCategoryLayoutChange,
     onTileLayoutChange,
-    resetLayout
+    resetLayout,
   } = useDashboardLayout(config?.categories, config?.gridLayout)
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && searchQuery.trim() !== '') {
-      const firstService = searchResults?.[0]
+    if (e.key === "Enter" && searchQuery.trim() !== "") {
+      const firstService = searchResults[0]
       if (firstService?.url) {
-        window.open(firstService.url, '_blank')
-        setSearchQuery('')
+        window.open(firstService.url, "_blank")
+        setSearchQuery("")
       }
     }
   }
 
-  if (!config) return <div className="min-h-screen bg-background text-foreground flex items-center justify-center">Loading...</div>
+  if (!config)
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
+        Loading...
+      </div>
+    )
 
-  const paddingClass = 'p-4 sm:p-8 md:p-12'
+  const paddingClass = "p-4 sm:p-8 md:p-12"
   const appStyle = config.font ? { fontFamily: config.font } : undefined
 
   return (
-    <div className={`min-h-screen bg-background text-foreground font-sans ${paddingClass} transition-colors duration-300`} style={appStyle}>
-      <div className="max-w-7xl mx-auto">
-        <DashboardHeader 
-          title={config?.title} 
-          titleSize={config?.titleSize} 
-          searchProps={config?.search ? {
-            value: searchQuery,
-            onChange: setSearchQuery,
-            onKeyDown: handleSearchKeyDown,
-            placeholder: config.searchPrompt
-          } : undefined}
+    <div
+      className={`min-h-screen bg-background font-sans text-foreground ${paddingClass} transition-colors duration-300`}
+      style={appStyle}
+    >
+      <div className="mx-auto max-w-7xl">
+        <DashboardHeader
+          title={config.title}
+          titleSize={config.titleSize}
+          searchProps={
+            config.search
+              ? {
+                  value: searchQuery,
+                  onChange: setSearchQuery,
+                  onKeyDown: handleSearchKeyDown,
+                  placeholder: config.searchPrompt,
+                }
+              : undefined
+          }
         />
         {isSearching ? (
           <SearchResultsGrid services={searchResults} />
@@ -76,7 +86,7 @@ export const App = () => {
             onTileLayoutChange={onTileLayoutChange}
           />
         )}
-        <SettingsWidget 
+        <SettingsWidget
           isEditMode={isEditMode}
           onToggleEditMode={() => setIsEditMode(!isEditMode)}
           onResetLayout={resetLayout}

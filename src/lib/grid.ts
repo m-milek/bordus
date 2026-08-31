@@ -2,7 +2,7 @@ import {
   getBreakpointFromWidth,
   getColsFromBreakpoint,
   type LayoutConstraint,
-} from 'react-grid-layout/core'
+} from "react-grid-layout/core"
 
 /**
  * Single source of truth for every pixel measurement in the dashboard grid.
@@ -53,12 +53,24 @@ export const ROW_UNIT = 1
  * tile inside that band at every width -- including just above a threshold,
  * where tiles are always at their smallest.
  */
-export const BREAKPOINTS = { lg: 1150, md: 860, sm: 570, xs: 430, xxs: 0 } as const
+export const BREAKPOINTS = {
+  lg: 1150,
+  md: 860,
+  sm: 570,
+  xs: 430,
+  xxs: 0,
+} as const
 export const COLS = { lg: 8, md: 6, sm: 4, xs: 3, xxs: 2 } as const
 
 export type BreakpointName = keyof typeof COLS
 
-export const BREAKPOINT_NAMES: BreakpointName[] = ['lg', 'md', 'sm', 'xs', 'xxs']
+export const BREAKPOINT_NAMES: BreakpointName[] = [
+  "lg",
+  "md",
+  "sm",
+  "xs",
+  "xxs",
+]
 
 /**
  * Constant part of the item height. It works out to zero -- a category's item
@@ -83,7 +95,8 @@ export const cellSize = (containerWidth: number, cols: number): number =>
   (containerWidth - GAP * (cols - 1) - PAGE_PAD * 2) / cols
 
 /** Span of `n` cells including the gutters between them. */
-export const blockSize = (n: number, cell: number): number => n * cell + (n - 1) * GAP
+export const blockSize = (n: number, cell: number): number =>
+  n * cell + (n - 1) * GAP
 
 /**
  * Height of a category's grid item, in `ROW_UNIT`s.
@@ -114,6 +127,9 @@ export const rowsFromH = (h: number, cell: number): number =>
  * on release.
  */
 export const wholeTileRows = (cell: number): LayoutConstraint => ({
-  name: 'wholeTileRows',
-  constrainSize: (_item, w, h) => ({ w, h: hFromRows(rowsFromH(h, cell), cell) }),
+  name: "wholeTileRows",
+  constrainSize: (_item, w, h) => ({
+    w,
+    h: hFromRows(rowsFromH(h, cell), cell),
+  }),
 })

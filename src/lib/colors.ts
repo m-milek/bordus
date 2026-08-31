@@ -1,10 +1,12 @@
-export type PredefinedColor = 
-  | "red" | "blue" | "green" | "orange" | "purple" | "primary" 
-  | "yellow" | "pink" | "cyan" | "teal" | "indigo" | "rose" | "gray"
+/*
+ * Every class string is spelled out in full rather than built from the colour
+ * name: Tailwind extracts classes by scanning source text, so an interpolated
+ * `bg-${name}-500/10` would never make it into the stylesheet.
+ */
 
 export const getColorClasses = (colorName?: string) => {
   if (!colorName) return "bg-transparent border-border"
-  
+
   const colors: Record<string, string> = {
     red: "bg-red-500/10 border-red-500/50",
     blue: "bg-blue-500/10 border-blue-500/50",
@@ -53,7 +55,7 @@ export const getTileColorClasses = (colorName?: string) => {
 
 export const getSolidColorClasses = (colorName?: string) => {
   if (!colorName) return "bg-muted text-muted-foreground"
-  
+
   const colors: Record<string, string> = {
     red: "bg-red-500 text-white",
     blue: "bg-blue-500 text-white",
