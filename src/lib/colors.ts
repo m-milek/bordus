@@ -24,6 +24,33 @@ export const getColorClasses = (colorName?: string) => {
   return colors[colorName.toLowerCase()] || "bg-transparent border-border"
 }
 
+/**
+ * Tile surface: the card colour nudged a few percent toward the category's.
+ *
+ * An opaque mix rather than a translucent overlay, so a tile reads as a plain
+ * solid sitting *on* the category's tinted panel instead of blending into it.
+ * The category card carries the colour; a tile only hints at it.
+ */
+export const getTileColorClasses = (colorName?: string) => {
+  const colors: Record<string, string> = {
+    red: "bg-[color-mix(in_oklab,var(--color-red-500)_7%,var(--card))]",
+    blue: "bg-[color-mix(in_oklab,var(--color-blue-500)_7%,var(--card))]",
+    green: "bg-[color-mix(in_oklab,var(--color-green-500)_7%,var(--card))]",
+    orange: "bg-[color-mix(in_oklab,var(--color-orange-500)_7%,var(--card))]",
+    purple: "bg-[color-mix(in_oklab,var(--color-purple-500)_7%,var(--card))]",
+    primary: "bg-[color-mix(in_oklab,var(--primary)_7%,var(--card))]",
+    yellow: "bg-[color-mix(in_oklab,var(--color-yellow-500)_7%,var(--card))]",
+    pink: "bg-[color-mix(in_oklab,var(--color-pink-500)_7%,var(--card))]",
+    cyan: "bg-[color-mix(in_oklab,var(--color-cyan-500)_7%,var(--card))]",
+    teal: "bg-[color-mix(in_oklab,var(--color-teal-500)_7%,var(--card))]",
+    indigo: "bg-[color-mix(in_oklab,var(--color-indigo-500)_7%,var(--card))]",
+    rose: "bg-[color-mix(in_oklab,var(--color-rose-500)_7%,var(--card))]",
+    gray: "bg-[color-mix(in_oklab,var(--color-gray-500)_7%,var(--card))]",
+  }
+
+  return (colorName && colors[colorName.toLowerCase()]) || "bg-card"
+}
+
 export const getSolidColorClasses = (colorName?: string) => {
   if (!colorName) return "bg-muted text-muted-foreground"
   

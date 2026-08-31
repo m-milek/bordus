@@ -8,6 +8,7 @@ Bordus is a lightweight, static dashboard designed for homelabs and personal sta
 - Instant Loading: The application parses its configuration before React mounts, ensuring zero layout shift and instant rendering.
 - Tiny Footprint: Provided as a multi-stage Docker image using BusyBox. The final image size is roughly 2MB.
 - Live Updates: When using Docker, the configuration file is mounted as a volume. Changes to the YAML file reflect instantly upon page refresh without rebuilding the container.
+- Categories: Services are grouped into categories, each a single resizable element on the grid with a coloured frame and a floating title pill. Frames are drawn into the gutter between tiles, so a tile sits the same distance from its neighbour whether or not they share a category.
 - Search: Includes a built-in search bar to filter services by name or description.
 - Theming: Automatic dark and light mode support based on system preferences, with a manual override toggle.
 - Icon Support: Automatically resolves section icons using Lucide and service icons using the Homarr dashboard-icons repository.
@@ -31,6 +32,34 @@ services:
 ```
 
 2. Create a `config.yaml` file in the same directory. See `config.example.yaml` in this repository for a full list of supported properties and options.
+
+### Arranging the grid
+
+Categories are laid out automatically, but you can size and place them yourself. All values are in tile units:
+
+| Key | Meaning |
+| --- | --- |
+| `w` | Category width in tile columns. Clamped to the columns available at the current breakpoint. Defaults to 4 on wide screens, narrowing with the layout. |
+| `rows` | How many tile rows are visible. Anything beyond scrolls inside the category, a whole row at a time, so a tile is never cut in half. Defaults to whatever fits, up to 3. |
+| `layout` | Per-breakpoint overrides of `w` and `rows`, plus an explicit `x`/`y` position. Breakpoints are `lg`, `md`, `sm`, `xs` and `xxs`. |
+
+```yaml
+categories:
+  - name: "Media"
+    color: "blue"
+    icon: "play"
+    w: 6
+    rows: 2
+    layout:
+      md: { w: 3 }
+    services:
+      - name: "Plex"
+        url: "http://plex.local:32400"
+```
+
+You can also arrange everything by hand. Open the settings widget, switch on edit mode, then drag categories by their title pill and tiles by the handle that appears when you hover one. Resizing a category snaps to whole tile rows.
+
+Edit-mode changes are saved in your browser. To make them permanent for everyone, press the copy button in edit mode and paste the resulting `gridLayout:` block into your `config.yaml`. Config is the fallback; anything saved in the browser wins until you reset the layout.
 
 3. Start the container:
 

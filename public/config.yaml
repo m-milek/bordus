@@ -7,6 +7,27 @@ search: true # Display the search bar
 searchPrompt: "Find an app..." # Customize the search placeholder
 
 # Categories & Services
+#
+# Each category is a single element on the grid: a coloured container with a
+# floating title pill, holding tiles that sit on the same grid as every other
+# tile on the page.
+#
+# Optional sizing keys, all in tile units:
+#   w     Width in tile columns. Clamped to the column count of the current
+#         breakpoint. Defaults to 4 on wide screens, narrowing with the layout.
+#   rows  How many tile rows are visible. Tiles beyond this scroll inside the
+#         category, always a whole row at a time. Defaults to whatever fits,
+#         up to 3.
+#   layout  Per-breakpoint overrides of the above, plus an explicit position:
+#
+#     layout:
+#       lg: { x: 0, y: 0, w: 6, rows: 2 }
+#       md: { w: 3 }
+#
+# You can also arrange everything by hand: turn on edit mode, drag categories
+# by their pill and tiles by their handle, then use the copy button to put a
+# `gridLayout:` block on your clipboard and paste it at the bottom of this file.
+
 categories:
   - name: "Media"
     color: "blue"
@@ -25,6 +46,7 @@ categories:
   - name: "Downloads"
     color: "green"
     icon: "download"
+    rows: 1 # Six services in one visible row: the rest scroll into view
     services:
       - name: "qBittorrent"
         url: "http://qbittorrent.local:8080"
@@ -192,6 +214,7 @@ categories:
   - name: "Edge Cases & Testing"
     color: "gray"
     icon: "bug"
+    w: 2 # A deliberately narrow category
     services:
       - name: "Missing Icon App"
         url: "http://missing.local"

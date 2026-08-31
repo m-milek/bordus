@@ -2,14 +2,14 @@ import { Settings, Lock, LockOpen, RotateCcw, Download, Check } from "lucide-rea
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { useState } from "react"
 import { stringify } from "yaml"
-import { ResponsiveLayouts } from "react-grid-layout/legacy"
+import type { DashboardLayoutState } from "@/hooks/useDashboardLayout"
 
 export interface SettingsWidgetProps {
   isEditMode?: boolean
   onToggleEditMode?: () => void
   onResetLayout?: () => void
   showResetLayout?: boolean
-  layouts?: ResponsiveLayouts
+  layout?: DashboardLayoutState
 }
 
 export const SettingsWidget = ({ 
@@ -17,14 +17,14 @@ export const SettingsWidget = ({
   onToggleEditMode, 
   onResetLayout, 
   showResetLayout,
-  layouts
+  layout
 }: SettingsWidgetProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [copied, setCopied] = useState(false)
 
   const handleExport = () => {
-    if (!layouts) return
-    const yamlString = stringify({ gridLayout: layouts })
+    if (!layout) return
+    const yamlString = stringify({ gridLayout: layout })
     navigator.clipboard.writeText(yamlString).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -61,7 +61,7 @@ export const SettingsWidget = ({
             </button>
           )}
 
-          {isEditMode && layouts && (
+          {isEditMode && layout && (
             <button
               onClick={handleExport}
               className="inline-flex items-center justify-center rounded-md p-2 hover:bg-green-500/20 text-green-600 dark:text-green-400 transition-colors w-full"

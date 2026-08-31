@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Config, loadConfig } from "@/lib/config"
 import { DashboardHeader } from "@/components/DashboardHeader"
-import { TileGrid } from "@/components/TileGrid"
+import { CategoryGrid } from "@/components/CategoryGrid"
+import { SearchResultsGrid } from "@/components/SearchResultsGrid"
 import { SettingsWidget } from "@/components/SettingsWidget"
 import { useFilteredServices } from "@/hooks/useFilteredServices"
-import { useGridLayout } from "@/hooks/useGridLayout"
+import { useDashboardLayout } from "@/hooks/useDashboardLayout"
 
 export const App = () => {
   const [config, setConfig] = useState<Config | null>(null)
@@ -25,12 +26,19 @@ export const App = () => {
     throw error
   }
 
-  const filteredServices = useFilteredServices(config?.categories, searchQuery)
-  const { layouts, onLayoutChange, resetLayout, isCustomized } = useGridLayout(filteredServices)
+  const isSearching = searchQuery.trim() !== ''
+  const searchResults = useFilteredServices(config?.categories, searchQuery)
+  const {
+    layout,
+    isCustomized,
+    onCategoryLayoutChange,
+    onTileLayoutChange,
+    resetLayout
+  } = useDashboardLayout(config?.categories, config?.gridLayout)
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim() !== '') {
-      const firstService = filteredServices?.[0]
+      const firstService = searchResults?.[0]
       if (firstService?.url) {
         window.open(firstService.url, '_blank')
         setSearchQuery('')
@@ -56,18 +64,24 @@ export const App = () => {
             placeholder: config.searchPrompt
           } : undefined}
         />
-        <TileGrid 
-          services={filteredServices} 
-          isEditMode={isEditMode}
-          layouts={layouts || undefined}
-          onLayoutChange={onLayoutChange}
-        />
+        {isSearching ? (
+          <SearchResultsGrid services={searchResults} />
+        ) : (
+          <CategoryGrid
+            categories={config.categories}
+            placements={layout.categories}
+            tiles={layout.tiles}
+            isEditMode={isEditMode}
+            onCategoryLayoutChange={onCategoryLayoutChange}
+            onTileLayoutChange={onTileLayoutChange}
+          />
+        )}
         <SettingsWidget 
           isEditMode={isEditMode}
           onToggleEditMode={() => setIsEditMode(!isEditMode)}
           onResetLayout={resetLayout}
           showResetLayout={isEditMode && isCustomized}
-          layouts={layouts || undefined}
+          layout={layout}
         />
       </div>
     </div>

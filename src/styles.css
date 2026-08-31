@@ -193,9 +193,13 @@ code {
   user-select: none;
 }
 
+/*
+ * RGL renders a resize handle whether or not resizing is enabled, so a locked
+ * grid opts out explicitly. The `:hover` selector is needed to outrank RGL's
+ * own hover rule.
+ */
 .react-grid-item > .react-resizable-handle {
-  /* Ensure resize handles are visible when RGL renders them (which is only when isResizable=true) */
-  opacity: 0.8;
+  opacity: 0.7;
   transition: opacity 0.2s ease-in-out;
 }
 
@@ -203,13 +207,69 @@ code {
   opacity: 1;
 }
 
-.drag-handle {
+/* RGL's own mark is a hardcoded black, which disappears on a dark theme. */
+.react-grid-item > .react-resizable-handle::after {
+  right: 4px;
+  bottom: 4px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--muted-foreground);
+  border-bottom: 2px solid var(--muted-foreground);
+  border-radius: 0 0 2px 0;
+}
+
+.grid-locked .react-grid-item > .react-resizable-handle,
+.grid-locked .react-grid-item:hover > .react-resizable-handle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.drag-handle,
+.category-drag-handle {
   cursor: grab;
   touch-action: none;
 }
 
-.drag-handle:active {
+.drag-handle:active,
+.category-drag-handle:active {
   cursor: grabbing;
+}
+
+/* Category Grid */
+
+/*
+ * A category's grid item is exactly as wide as the block of tiles inside it,
+ * and taller than its card by the gap strip that separates it from the
+ * category below. Pull the resize handle back onto the card's bottom-right
+ * corner so it grabs where the card visually ends.
+ */
+.category-item.react-grid-item > .react-resizable-handle.react-resizable-handle-se {
+  right: -12px; /* PAD */
+  bottom: 12px; /* CAT_GAP */
+}
+
+/* The title pill and the card overhang the item box, so nothing may clip. */
+.category-item {
+  overflow: visible;
+}
+
+/*
+ * Scroll snapping inside a category is what guarantees a partial tile is never
+ * left visible: the stops are one whole tile row apart, and the maximum scroll
+ * offset lands exactly on the last one.
+ */
+.category-body {
+  scroll-behavior: smooth;
+  /*
+   * The viewport is exactly as wide as its block of tiles, so a scrollbar that
+   * reserves space would shave pixels off the last column. Hide it and let the
+   * chevron in the card's footer band signal that there is more to see.
+   */
+  scrollbar-width: none;
+}
+
+.category-body::-webkit-scrollbar {
+  display: none;
 }
 
 /* Custom Scrollbar for overflow areas */
