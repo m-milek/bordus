@@ -1,5 +1,6 @@
 import { parse } from "yaml"
 import { z } from "zod"
+import { WIDGETS } from "@/widgets/registry"
 
 export const ServiceSchema = z.object({
   name: z.string(),
@@ -34,6 +35,23 @@ export const CategorySchema = z.object({
   services: z.array(ServiceSchema),
 })
 export type Category = z.infer<typeof CategorySchema>
+
+export const WidgetSchema = z
+  .object({
+    type: z.enum(Object.keys(WIDGETS)),
+    name: z.string(),
+    color: z.string().optional(),
+    icon: z.string().optional(),
+    w: z.number().int().min(1).optional(),
+    rows: z.number().int().min(1).optional(),
+    layout: z.partialRecord(BreakpointSchema, PlacementSchema).optional(),
+    options: z.unknown(),
+  })
+  .transform((widget) => ({
+    ...widget,
+    options: WIDGETS[widget.type].optionsSchema.parse(widget.options ?? {}),
+  }))
+export type Widget = z.output<typeof WidgetSchema>
 
 /**
  * A saved category placement. Height is stored as a count of tile rows rather
@@ -83,6 +101,7 @@ export const ConfigSchema = z.object({
   searchPrompt: z.string().optional(),
   gridLayout: DashboardLayoutSchema.optional(),
   categories: z.array(CategorySchema).optional(),
+  widgets: z.array(WidgetSchema).optional(),
 })
 export type Config = z.infer<typeof ConfigSchema>
 

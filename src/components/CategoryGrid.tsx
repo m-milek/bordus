@@ -6,8 +6,14 @@ import {
   type ResponsiveLayouts,
 } from "react-grid-layout"
 import { gridBounds, minMaxSize } from "react-grid-layout/core"
-import { Category, CategoryPlacement, TilePlacement } from "@/lib/config"
+import {
+  Category,
+  CategoryPlacement,
+  TilePlacement,
+  Widget,
+} from "@/lib/config"
 import { CategoryCard } from "@/components/CategoryCard"
+import { WidgetCard } from "@/components/WidgetCard"
 import {
   BREAKPOINTS,
   BreakpointName,
@@ -26,8 +32,13 @@ import type {
   TilePlacements,
 } from "@/hooks/useDashboardLayout"
 
+type GridItem =
+  | { kind: "category"; category: Category; placement: CategoryPlacement }
+  | { kind: "widget"; widget: Widget; placement: CategoryPlacement }
+
 export interface CategoryGridProps {
   categories?: Category[]
+  widgets?: Widget[]
   placements: CategoryPlacements
   tiles: TilePlacements
   isEditMode?: boolean
@@ -44,6 +55,7 @@ export interface CategoryGridProps {
 
 export const CategoryGrid = ({
   categories,
+  widgets,
   placements,
   tiles,
   isEditMode = false,
@@ -61,13 +73,20 @@ export const CategoryGrid = ({
 
   // Only categories that have a placement at this breakpoint are rendered, so
   // the children and the layout can never disagree.
-  const visible = useMemo(() => {
+  const visible = useMemo<GridItem[]>(() => {
     const byName = new Map((placements[breakpoint] ?? []).map((p) => [p.i, p]))
-    return (categories ?? []).flatMap((category) => {
+    const categoryItems = (categories ?? []).flatMap((category) => {
       const placement = byName.get(category.name)
-      return placement ? [{ category, placement }] : []
+      return placement
+        ? [{ kind: "category" as const, category, placement }]
+        : []
     })
-  }, [categories, placements, breakpoint])
+    const widgetItems = (widgets ?? []).flatMap((widget) => {
+      const placement = byName.get(widget.name)
+      return placement ? [{ kind: "widget" as const, widget, placement }] : []
+    })
+    return [...categoryItems, ...widgetItems]
+  }, [categories, widgets, placements, breakpoint])
 
   /*
    * `rows` is what gets stored, because it survives a change of screen; the
@@ -113,7 +132,7 @@ export const CategoryGrid = ({
     )
   }
 
-  if (!categories || categories.length === 0) return null
+  if (!categories?.length && !widgets?.length) return null
 
   return (
     <div
@@ -143,19 +162,29 @@ export const CategoryGrid = ({
           onDragStop={handleGestureEnd}
           onResizeStop={handleGestureEnd}
         >
-          {visible.map(({ category, placement }) => (
-            <div key={category.name} className="category-item">
-              <CategoryCard
-                category={category}
-                width={placement.w}
-                rows={placement.rows}
-                cell={cell}
-                tiles={tiles[category.name]?.[breakpoint] ?? []}
-                isEditMode={isEditMode}
-                onTilesChange={(next) =>
-                  onTileLayoutChange?.(category.name, breakpoint, next)
-                }
-              />
+          {visible.map((item) => (
+            <div key={item.placement.i} className="category-item">
+              {item.kind === "category" ? (
+                <CategoryCard
+                  category={item.category}
+                  width={item.placement.w}
+                  rows={item.placement.rows}
+                  cell={cell}
+                  tiles={tiles[item.category.name]?.[breakpoint] ?? []}
+                  isEditMode={isEditMode}
+                  onTilesChange={(next) =>
+                    onTileLayoutChange?.(item.category.name, breakpoint, next)
+                  }
+                />
+              ) : (
+                <WidgetCard
+                  widget={item.widget}
+                  width={item.placement.w}
+                  rows={item.placement.rows}
+                  cell={cell}
+                  isEditMode={isEditMode}
+                />
+              )}
             </div>
           ))}
         </ResponsiveGridLayout>

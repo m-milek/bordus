@@ -32,7 +32,11 @@ export const App = () => {
     onCategoryLayoutChange,
     onTileLayoutChange,
     resetLayout,
-  } = useDashboardLayout(config?.categories, config?.gridLayout)
+  } = useDashboardLayout(
+    config?.categories,
+    config?.gridLayout,
+    config?.widgets
+  )
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchQuery.trim() !== "") {
@@ -79,6 +83,7 @@ export const App = () => {
         ) : (
           <CategoryGrid
             categories={config.categories}
+            widgets={config.widgets}
             placements={layout.categories}
             tiles={layout.tiles}
             isEditMode={isEditMode}

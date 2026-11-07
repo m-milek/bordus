@@ -4,7 +4,9 @@ import {
   CategoryPlacement,
   DashboardLayout,
   DashboardLayoutSchema,
+  Placement,
   TilePlacement,
+  Widget,
 } from "@/lib/config"
 import { BREAKPOINT_NAMES, BreakpointName, COLS } from "@/lib/grid"
 
@@ -44,10 +46,13 @@ export interface DashboardLayoutState {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
 
-const hashCategories = (categories: Category[]) =>
-  categories
-    .map((cat) => `${cat.name}:${cat.services.map((s) => s.name).join(",")}`)
-    .join("|") + `|${VERSION}`
+const hashItems = (categories: Category[], widgets: Widget[]) =>
+  [
+    ...categories.map(
+      (cat) => `${cat.name}:${cat.services.map((s) => s.name).join(",")}`
+    ),
+    ...widgets.map((widget) => `widget:${widget.name}:${widget.type}`),
+  ].join("|") + `|${VERSION}`
 
 const defaultTiles = (category: Category, width: number): TilePlacement[] =>
   category.services.map((service, i) => ({
@@ -58,9 +63,26 @@ const defaultTiles = (category: Category, width: number): TilePlacement[] =>
     h: 1,
   }))
 
-const generateDefaults = (categories: Category[]): DashboardLayoutState => {
+interface GridItem {
+  name: string
+  w?: number
+  rows?: number
+  layout?: Partial<Record<BreakpointName, Placement>>
+  serviceCount?: number
+}
+
+const WIDGET_SIZE = 2
+
+const generateDefaults = (
+  categories: Category[],
+  widgets: Widget[]
+): DashboardLayoutState => {
   const placements: CategoryPlacements = {}
   const tiles: TilePlacements = {}
+  const items: GridItem[] = [
+    ...categories.map((c) => ({ ...c, serviceCount: c.services.length })),
+    ...widgets,
+  ]
 
   for (const category of categories) {
     tiles[category.name] = {}
@@ -71,17 +93,23 @@ const generateDefaults = (categories: Category[]): DashboardLayoutState => {
     let cursorX = 0
     let cursorRow = 0
 
-    placements[breakpoint] = categories.map((category) => {
-      const override = category.layout?.[breakpoint]
+    placements[breakpoint] = items.map((item) => {
+      const override = item.layout?.[breakpoint]
       const width = clamp(
-        override?.w ?? category.w ?? DEFAULT_WIDTH[breakpoint],
+        override?.w ??
+          item.w ??
+          (item.serviceCount === undefined
+            ? WIDGET_SIZE
+            : DEFAULT_WIDTH[breakpoint]),
         1,
         cols
       )
       const rows =
         override?.rows ??
-        category.rows ??
-        clamp(Math.ceil(category.services.length / width), 1, MAX_DEFAULT_ROWS)
+        item.rows ??
+        (item.serviceCount === undefined
+          ? WIDGET_SIZE
+          : clamp(Math.ceil(item.serviceCount / width), 1, MAX_DEFAULT_ROWS))
 
       if (cursorX + width > cols) {
         cursorX = 0
@@ -91,16 +119,21 @@ const generateDefaults = (categories: Category[]): DashboardLayoutState => {
       const y = override?.y ?? cursorRow * Y_STRIDE
       cursorX = x + width
 
-      tiles[category.name][breakpoint] = defaultTiles(category, width)
-
       return {
-        i: category.name,
+        i: item.name,
         x: clamp(x, 0, cols - width),
         y,
         w: width,
         rows,
       }
     })
+
+    for (const category of categories) {
+      const width =
+        placements[breakpoint].find((p) => p.i === category.name)?.w ??
+        DEFAULT_WIDTH[breakpoint]
+      tiles[category.name][breakpoint] = defaultTiles(category, width)
+    }
   }
 
   return { categories: placements, tiles }
@@ -118,7 +151,9 @@ const applyOverride = (
 ): DashboardLayoutState => {
   if (!override) return base
 
-  const known = new Set(categories.map((c) => c.name))
+  const known = new Set(
+    Object.values(base.categories).flatMap((list) => list.map((p) => p.i))
+  )
   const merged: DashboardLayoutState = {
     categories: { ...base.categories },
     tiles: { ...base.tiles },
@@ -203,10 +238,11 @@ const readSaved = (hash: string): DashboardLayout | null => {
 
 const buildLayout = (
   categories: Category[],
+  widgets: Widget[],
   configLayout: DashboardLayout | undefined,
   hash: string
 ): { layout: DashboardLayoutState; isCustomized: boolean } => {
-  const defaults = generateDefaults(categories)
+  const defaults = generateDefaults(categories, widgets)
   const fromConfig = applyOverride(defaults, configLayout, categories)
   const saved = readSaved(hash)
   return {
@@ -215,17 +251,20 @@ const buildLayout = (
   }
 }
 
+const NO_WIDGETS: Widget[] = []
+
 export const useDashboardLayout = (
   categories: Category[] | undefined,
-  configLayout: DashboardLayout | undefined
+  configLayout: DashboardLayout | undefined,
+  widgets: Widget[] = NO_WIDGETS
 ) => {
   const hash = useMemo(
-    () => (categories ? hashCategories(categories) : ""),
-    [categories]
+    () => (categories ? hashItems(categories, widgets) : ""),
+    [categories, widgets]
   )
   const [state, setState] = useState(() =>
     categories
-      ? buildLayout(categories, configLayout, hash)
+      ? buildLayout(categories, widgets, configLayout, hash)
       : {
           layout: { categories: {}, tiles: {} } as DashboardLayoutState,
           isCustomized: false,
@@ -238,7 +277,7 @@ export const useDashboardLayout = (
     setLastHash(hash)
     setState(
       categories
-        ? buildLayout(categories, configLayout, hash)
+        ? buildLayout(categories, widgets, configLayout, hash)
         : { layout: { categories: {}, tiles: {} }, isCustomized: false }
     )
   }
@@ -294,12 +333,12 @@ export const useDashboardLayout = (
   const resetLayout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
     if (!categories) return
-    const defaults = generateDefaults(categories)
+    const defaults = generateDefaults(categories, widgets)
     setState({
       layout: applyOverride(defaults, configLayout, categories),
       isCustomized: false,
     })
-  }, [categories, configLayout])
+  }, [categories, widgets, configLayout])
 
   return {
     layout: state.layout,

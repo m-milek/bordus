@@ -2,11 +2,10 @@ import { useMemo } from "react"
 import { ChevronDown } from "lucide-react"
 import { GridLayout, type Layout } from "react-grid-layout"
 import { Category, TilePlacement } from "@/lib/config"
-import { getColorClasses, getSolidColorClasses } from "@/lib/colors"
-import { CategoryIcon } from "@/components/CategoryIcon"
 import { DragHandle } from "@/components/DragHandle"
+import { PanelFrame } from "@/components/PanelFrame"
 import { Tile } from "@/components/Tile"
-import { GAP, PAD, PILL_HEIGHT, blockSize, categoryHeightPx } from "@/lib/grid"
+import { GAP, PAD, blockSize } from "@/lib/grid"
 import { wrapCompactor } from "@/lib/wrapCompactor"
 
 export interface CategoryCardProps {
@@ -81,45 +80,15 @@ export const CategoryCard = ({
   }
 
   return (
-    <div className="relative h-full w-full">
-      <div
-        className={`category-card absolute z-0 rounded-[var(--radius)] border-2 ${getColorClasses(category.color)}`}
-        style={{
-          left: -PAD,
-          right: -PAD,
-          top: 0,
-          height: categoryHeightPx(rows, cell),
-        }}
-      />
-
-      <div
-        className="absolute z-20 -translate-y-1/2"
-        // The card's left edge is at -PAD; sit the pill 20px in from there, and
-        // cap its width so a long title stays 20px clear of the right edge too
-        // (card width is innerWidth + 2*PAD) rather than spilling onto the
-        // neighbouring card's border.
-        style={{ top: 0, left: -PAD + 20, maxWidth: innerWidth + 2 * PAD - 40 }}
-      >
-        <div
-          className={`flex min-w-0 items-center justify-center gap-1.5 rounded-full px-3 shadow-sm ${getSolidColorClasses(
-            category.color
-          )} ${isEditMode ? "category-drag-handle cursor-grab active:cursor-grabbing" : ""}`}
-          // The card's top band is sized from this, so it cannot be left to
-          // whatever the text and padding happen to add up to.
-          style={{ height: PILL_HEIGHT }}
-        >
-          {category.icon && (
-            <CategoryIcon
-              name={category.icon}
-              className="h-3.5 w-3.5 shrink-0"
-            />
-          )}
-          <span className="truncate text-xs leading-none font-semibold whitespace-nowrap">
-            {category.name}
-          </span>
-        </div>
-      </div>
-
+    <PanelFrame
+      name={category.name}
+      color={category.color}
+      icon={category.icon}
+      width={width}
+      rows={rows}
+      cell={cell}
+      isEditMode={isEditMode}
+    >
       <div
         className={`category-body absolute z-10 overflow-x-hidden ${
           // Nothing to scroll to when every tile is already on screen.
@@ -194,6 +163,6 @@ export const CategoryCard = ({
           <ChevronDown className="h-3 w-3" />
         </div>
       )}
-    </div>
+    </PanelFrame>
   )
 }

@@ -1,0 +1,66 @@
+[
+  {
+    "image": "postgres:17",
+    "pinned": false,
+    "status": "rebuild",
+    "major": ["18"],
+    "minor": [],
+    "patch": []
+  },
+  {
+    "image": "alpine:3.20",
+    "pinned": false,
+    "status": "rebuild",
+    "major": [],
+    "minor": ["3.24", "3.23", "3.22", "3.21"],
+    "patch": []
+  },
+  {
+    "image": "traefik/whoami:v1.10",
+    "pinned": false,
+    "status": "up-to-date",
+    "major": [],
+    "minor": ["v1.12", "v1.11"],
+    "patch": []
+  },
+  {
+    "image": "ghcr.io/m-milek/bordus:0.0.1",
+    "pinned": false,
+    "status": "up-to-date",
+    "major": [],
+    "minor": [],
+    "patch": []
+  },
+  {
+    "image": "docker.io/library/alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc",
+    "pinned": true,
+    "status": "up-to-date",
+    "major": [],
+    "minor": ["3.24", "3.23", "3.22", "3.21"],
+    "patch": []
+  },
+  {
+    "image": "mysql@sha256:3819b2b23835c4a73c8b022fafc33c8095c0f81c929a8b7a84613d2fba6c52f5",
+    "pinned": true,
+    "status": "pinned",
+    "major": [],
+    "minor": [],
+    "patch": []
+  },
+  {
+    "image": "julescraft-server",
+    "pinned": false,
+    "status": "not-checkable",
+    "major": [],
+    "minor": [],
+    "patch": []
+  },
+  {
+    "image": "nginx:1.27",
+    "pinned": false,
+    "status": "error",
+    "major": [],
+    "minor": [],
+    "patch": []
+  }
+]
