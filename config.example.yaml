@@ -223,3 +223,19 @@ categories:
       - name: "Short"
         url: "http://short.local"
         icon: "docker"
+
+# Widgets
+#
+# Integrations with other services, placed on the grid like categories and
+# sized with the same w / rows / layout keys.
+
+widgets:
+  - type: "swiezak"
+    name: "Image Updates"
+    color: "teal"
+    icon: "container"
+    w: 4
+    rows: 3
+    options:
+      url: "http://localhost:1991/api/v1/docker"
+      hideNotCheckable: false # Hide local images swiezak can't look up
