@@ -267,14 +267,12 @@ body {
  */
 .category-body {
   scroll-behavior: smooth;
-  /*
-   * The viewport is exactly as wide as its block of tiles, so a scrollbar that
-   * reserves space would shave pixels off the last column. Hide it and let the
-   * chevron in the card's footer band signal that there is more to see.
-   */
-  scrollbar-width: none;
 }
 
-.category-body::-webkit-scrollbar {
-  display: none;
+@utility scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }

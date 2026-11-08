@@ -90,7 +90,7 @@ export const CategoryCard = ({
       isEditMode={isEditMode}
     >
       <div
-        className={`category-body absolute z-10 overflow-x-hidden ${
+        className={`category-body scrollbar-none absolute z-10 overflow-x-hidden ${
           // Nothing to scroll to when every tile is already on screen.
           isScrollable
             ? "overflow-y-auto overscroll-contain"

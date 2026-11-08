@@ -141,7 +141,7 @@ export const SwiezakWidget = ({ options }: WidgetProps<SwiezakOptions>) => {
   return (
     <div className="@container flex h-full flex-col">
       <SwiezakSummary rows={data.rows} checkedAt={data.checkedAt} />
-      <ul className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto overscroll-contain">
+      <ul className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto overscroll-contain scrollbar-none">
         {data.rows.map((row) => (
           <SwiezakRowItem key={row.key} row={row} />
         ))}
