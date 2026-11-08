@@ -139,6 +139,7 @@ export const loadConfig = async (): Promise<Config> => {
       link.rel = "icon"
       document.head.appendChild(link)
     }
+    link.removeAttribute("type")
     link.href = config.favicon
   }
 

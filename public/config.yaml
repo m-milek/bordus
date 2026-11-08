@@ -1,7 +1,7 @@
 # Global Configuration
 title: "Homelab Dashboard"
 # font: "Inter, sans-serif" # Optional: any CSS font-family your browser can resolve
-favicon: "https://example.com/favicon.ico"
+favicon: "/favicon.svg"
 theme: "auto" # Supported options: light, dark, auto
 search: true # Display the search bar
 searchPrompt: "Find an app..." # Customize the search placeholder
