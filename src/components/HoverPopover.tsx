@@ -30,6 +30,7 @@ export const HoverPopover = ({
 
   const open = () => {
     cancel()
+    if (!content) return
     timerRef.current = setTimeout(() => {
       const rect = triggerRef.current?.getBoundingClientRect()
       if (rect)

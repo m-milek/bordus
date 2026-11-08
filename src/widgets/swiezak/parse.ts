@@ -32,7 +32,7 @@ export interface SwiezakRow {
   count: number
 }
 
-const UPDATE_LEVELS: UpdateLevel[] = ["major", "minor", "patch"]
+export const UPDATE_LEVELS: UpdateLevel[] = ["major", "minor", "patch"]
 
 export const parseImageRef = (image: string) => {
   if (image.startsWith("sha256:")) {
@@ -101,3 +101,6 @@ export const lastCheckedAt = (images: SwiezakImage[]) =>
     .filter((date): date is string => Boolean(date))
     .sort()
     .at(-1)
+
+export const countImages = (rows: SwiezakRow[]) =>
+  rows.reduce((total, row) => total + row.count, 0)

@@ -50,7 +50,6 @@ export const useFilteredServices = (
         category.services.map((service) => ({
           ...service,
           categoryName: category.name,
-          categoryColor: category.color,
         }))
       ),
     [categories]

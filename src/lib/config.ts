@@ -7,7 +7,6 @@ export const ServiceSchema = z.object({
   url: z.string().url(),
   icon: z.string().optional(),
   categoryName: z.string().optional(),
-  categoryColor: z.string().optional(),
 })
 export type Service = z.infer<typeof ServiceSchema>
 

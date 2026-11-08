@@ -1,3 +1,5 @@
+import type { UpdateCandidate } from "@/widgets/swiezak/parse"
+
 export const formatStatus = (status: string) =>
   status.charAt(0).toUpperCase() + status.slice(1).replaceAll("-", " ")
 
@@ -8,3 +10,6 @@ export const formatEuDateTime = (date: Date) =>
 
 export const plural = (count: number, word: string) =>
   `${count} ${word}${count === 1 ? "" : "s"}`
+
+export const describeUpdate = ({ level, version }: UpdateCandidate) =>
+  `${level} update to ${version}`

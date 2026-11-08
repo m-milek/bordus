@@ -1,15 +1,10 @@
 import type { ReactNode } from "react"
-import { SearchBar } from "@/components/SearchBar"
+import { SearchBar, type SearchBarProps } from "@/components/SearchBar"
 
 export interface DashboardHeaderProps {
   title?: string
   titleSize?: string
-  searchProps?: {
-    value: string
-    onChange: (value: string) => void
-    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-    placeholder?: string
-  }
+  searchProps?: SearchBarProps
   actions?: ReactNode
 }
 

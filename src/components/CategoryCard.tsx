@@ -52,20 +52,9 @@ export const CategoryCard = ({
   isEditMode = false,
   onTilesChange,
 }: CategoryCardProps) => {
-  // Tiles take their tint from the category, matching the card's own colour.
   const services = useMemo(
-    () =>
-      new Map(
-        category.services.map((service) => [
-          service.name,
-          {
-            ...service,
-            categoryName: category.name,
-            categoryColor: category.color,
-          },
-        ])
-      ),
-    [category.services, category.name, category.color]
+    () => new Map(category.services.map((service) => [service.name, service])),
+    [category.services]
   )
 
   const placed = useMemo(
