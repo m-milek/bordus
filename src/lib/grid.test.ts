@@ -133,7 +133,7 @@ describe("breakpointForWidth / colsForWidth", () => {
 
     for (let width = 300; width <= 1184; width++) {
       const cell = cellSize(width, colsForWidth(width))
-      if (cell < 105) tooSmall.push(`${width}px -> ${cell.toFixed(0)}px`)
+      if (cell < 85) tooSmall.push(`${width}px -> ${cell.toFixed(0)}px`)
       if (cell > 190) tooLarge.push(`${width}px -> ${cell.toFixed(0)}px`)
     }
 
@@ -147,13 +147,13 @@ describe("breakpointForWidth / colsForWidth", () => {
     expect(breakpointForWidth(861)).toBe("md")
     expect(breakpointForWidth(860)).toBe("sm")
     expect(breakpointForWidth(571)).toBe("sm")
-    expect(breakpointForWidth(431)).toBe("xs")
-    expect(breakpointForWidth(430)).toBe("xxs")
+    expect(breakpointForWidth(361)).toBe("xs")
+    expect(breakpointForWidth(360)).toBe("xxs")
   })
 
-  it("gives a phone two columns rather than three", () => {
-    // A 390px phone leaves a 358px container after the page padding.
-    expect(colsForWidth(358)).toBe(2)
-    expect(cellSize(358, 2)).toBeCloseTo(147, 0)
+  it("gives a phone three columns", () => {
+    expect(colsForWidth(374)).toBe(3)
+    expect(colsForWidth(414)).toBe(3)
+    expect(cellSize(414, 3)).toBeCloseTo(103, 0)
   })
 })

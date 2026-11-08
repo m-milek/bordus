@@ -55,7 +55,7 @@ export const App = () => {
       </div>
     )
 
-  const paddingClass = "p-4 sm:p-8 md:p-12"
+  const paddingClass = "px-2 py-4 sm:p-8 md:p-12"
   const appStyle = config.font ? { fontFamily: config.font } : undefined
 
   return (

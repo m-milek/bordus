@@ -40,7 +40,7 @@ export const Tile = ({ service, variant = "category" }: TileProps) => {
         <div className="flex w-full min-w-0 flex-shrink-0 flex-col items-center">
           <span
             title={service.name}
-            className="line-clamp-2 w-full text-center text-[15px] leading-tight font-medium break-words text-foreground/80 transition-colors group-hover:text-foreground"
+            className="line-clamp-2 w-full text-center text-[13px] leading-tight font-medium break-words text-foreground/80 transition-colors group-hover:text-foreground sm:text-[15px]"
           >
             {service.name}
           </span>
