@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react"
 import fixture from "@/test/fixtures/swiezak-response.json"
 import live from "@/test/fixtures/swiezak-live.json"
 import { SwiezakWidget } from "@/widgets/swiezak/SwiezakWidget"
+import { formatEuDateTime } from "@/widgets/swiezak/format"
 import {
   SwiezakResponseSchema,
   parseImageRef,
@@ -69,6 +70,14 @@ describe("toRows", () => {
   })
 })
 
+describe("formatEuDateTime", () => {
+  it("formats as day.month.year with a 24-hour clock", () => {
+    expect(formatEuDateTime(new Date(2026, 10, 8, 18, 5))).toBe(
+      "08.11.2026 18:05"
+    )
+  })
+})
+
 describe("SwiezakResponseSchema", () => {
   it("accepts a live response that omits empty version lists", () => {
     const images = SwiezakResponseSchema.parse(live)
@@ -82,9 +91,12 @@ describe("SwiezakWidget", () => {
     mockFetch(Response.json(fixture))
     renderWidget()
 
-    expect(
-      await screen.findByText("4 updates · 2 rebuilds · 1 error")
-    ).toBeInTheDocument()
+    expect(await screen.findByTitle("1 major update")).toHaveTextContent("1")
+    expect(screen.getByTitle("3 minor updates")).toHaveTextContent("3")
+    expect(screen.getByTitle("2 rebuilds")).toHaveTextContent("2")
+    expect(screen.getByTitle("1 error")).toHaveTextContent("1")
+    expect(screen.getByTitle("1 up to date")).toHaveTextContent("1")
+    expect(screen.getAllByText("Up to date").length).toBeGreaterThan(0)
     expect(screen.getByTitle("major update to 18")).toBeInTheDocument()
     expect(screen.getAllByRole("listitem")).toHaveLength(fixture.length)
   })
@@ -94,7 +106,7 @@ describe("SwiezakWidget", () => {
     renderWidget(true)
 
     expect(await screen.findByTitle("major update to 18")).toBeInTheDocument()
-    expect(screen.queryByText("not-checkable")).toBeNull()
+    expect(screen.queryByText("Not checkable")).toBeNull()
     expect(screen.getAllByRole("listitem")).toHaveLength(
       fixture.filter((image) => image.status !== "not-checkable").length
     )
