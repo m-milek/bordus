@@ -60,7 +60,7 @@ export const App = () => {
 
   return (
     <div
-      className={`min-h-screen bg-background font-sans text-foreground ${paddingClass} transition-colors duration-300`}
+      className={`app-background min-h-screen bg-background font-sans text-foreground ${paddingClass} transition-colors duration-300`}
       style={appStyle}
     >
       <div className="mx-auto max-w-7xl">
@@ -77,6 +77,15 @@ export const App = () => {
                 }
               : undefined
           }
+          actions={
+            <SettingsWidget
+              isEditMode={isEditMode}
+              onToggleEditMode={() => setIsEditMode(!isEditMode)}
+              onResetLayout={resetLayout}
+              showResetLayout={isEditMode && isCustomized}
+              layout={layout}
+            />
+          }
         />
         {isSearching ? (
           <SearchResultsGrid services={searchResults} />
@@ -91,13 +100,6 @@ export const App = () => {
             onTileLayoutChange={onTileLayoutChange}
           />
         )}
-        <SettingsWidget
-          isEditMode={isEditMode}
-          onToggleEditMode={() => setIsEditMode(!isEditMode)}
-          onResetLayout={resetLayout}
-          showResetLayout={isEditMode && isCustomized}
-          layout={layout}
-        />
       </div>
     </div>
   )

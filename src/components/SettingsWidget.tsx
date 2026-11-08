@@ -41,9 +41,9 @@ export const SettingsWidget = ({
   }
 
   return (
-    <div className="fixed right-6 bottom-6 z-50 flex flex-col items-end gap-2">
+    <div className="relative z-50">
       {isOpen && (
-        <div className="mb-2 flex animate-in flex-col gap-1 rounded-xl border border-border bg-card p-2 shadow-xl duration-200 fade-in slide-in-from-bottom-2">
+        <div className="absolute top-full right-0 mt-2 flex animate-in flex-col gap-1 rounded-xl border border-border bg-card p-1.5 shadow-xl duration-200 fade-in slide-in-from-top-2">
           <ThemeToggle />
 
           {showResetLayout && (
@@ -92,11 +92,11 @@ export const SettingsWidget = ({
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105"
+        className={`flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground ${isOpen ? "bg-foreground/[0.06] text-foreground" : ""}`}
         aria-label="Settings"
       >
         <Settings
-          className={`h-6 w-6 transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
+          className={`h-[18px] w-[18px] transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
         />
       </button>
     </div>

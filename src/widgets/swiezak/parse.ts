@@ -16,13 +16,20 @@ export const SwiezakResponseSchema = z.array(SwiezakImageSchema)
 
 export type UpdateLevel = "major" | "minor" | "patch"
 
+export interface UpdateCandidate {
+  level: UpdateLevel
+  version: string
+}
+
 export interface SwiezakRow {
   key: string
   name: string
   version: string
   status: string
   error?: string
-  update?: { level: UpdateLevel; version: string }
+  update?: UpdateCandidate
+  otherCandidates: UpdateCandidate[]
+  count: number
 }
 
 const UPDATE_LEVELS: UpdateLevel[] = ["major", "minor", "patch"]
@@ -51,19 +58,42 @@ const rank = (row: SwiezakRow) => {
   return 5
 }
 
+const identityOf = (row: Omit<SwiezakRow, "key" | "count">) =>
+  JSON.stringify([
+    row.name,
+    row.version,
+    row.status,
+    row.error,
+    row.update,
+    row.otherCandidates,
+  ])
+
+const dedupe = (rows: Omit<SwiezakRow, "key" | "count">[]): SwiezakRow[] => {
+  const byIdentity = new Map<string, SwiezakRow>()
+  for (const row of rows) {
+    const key = identityOf(row)
+    const existing = byIdentity.get(key)
+    if (existing) existing.count += 1
+    else byIdentity.set(key, { ...row, key, count: 1 })
+  }
+  return [...byIdentity.values()]
+}
+
 export const toRows = (images: SwiezakImage[]): SwiezakRow[] =>
-  images
-    .map((image, index) => {
-      const level = UPDATE_LEVELS.find((l) => image[l].length > 0)
+  dedupe(
+    images.map((image) => {
+      const [update, ...otherCandidates] = UPDATE_LEVELS.flatMap((level) =>
+        image[level].map((version) => ({ level, version }))
+      )
       return {
-        key: `${index}:${image.image}`,
         ...parseImageRef(image.image),
         status: image.status,
         error: image.error,
-        update: level && { level, version: image[level][0] },
+        update,
+        otherCandidates,
       }
     })
-    .sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name))
+  ).sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name))
 
 export const lastCheckedAt = (images: SwiezakImage[]) =>
   images

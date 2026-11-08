@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { UIEvent, useMemo, useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { GridLayout, type Layout } from "react-grid-layout"
 import { Category, TilePlacement } from "@/lib/config"
@@ -19,6 +19,25 @@ export interface CategoryCardProps {
   tiles: TilePlacement[]
   isEditMode?: boolean
   onTilesChange?: (placements: TilePlacement[]) => void
+}
+
+const FADE_PX = 16
+const FADE_EDGE = "rgb(0 0 0 / 0.1)"
+
+type Overflow = "none" | "top" | "bottom" | "both"
+
+const overflowOf = (hasAbove: boolean, hasBelow: boolean): Overflow => {
+  if (hasAbove && hasBelow) return "both"
+  if (hasAbove) return "top"
+  if (hasBelow) return "bottom"
+  return "none"
+}
+
+const FADE_MASKS: Record<Overflow, string | undefined> = {
+  none: undefined,
+  top: `linear-gradient(to bottom, ${FADE_EDGE}, black ${FADE_PX}px)`,
+  bottom: `linear-gradient(to bottom, black calc(100% - ${FADE_PX}px), ${FADE_EDGE})`,
+  both: `linear-gradient(to bottom, ${FADE_EDGE}, black ${FADE_PX}px, black calc(100% - ${FADE_PX}px), ${FADE_EDGE})`,
 }
 
 const toTilePlacements = (layout: Layout): TilePlacement[] =>
@@ -61,6 +80,15 @@ export const CategoryCard = ({
   const viewportHeight = blockSize(rows, cell)
   const isScrollable = totalRows > rows
   const canScroll = isScrollable && !isEditMode
+  const [scrollTop, setScrollTop] = useState(0)
+  const maxScrollTop = blockSize(totalRows, cell) - viewportHeight
+  const overflow = isScrollable
+    ? overflowOf(scrollTop > 1, scrollTop < maxScrollTop - 1)
+    : "none"
+  const fadeMask = FADE_MASKS[overflow]
+
+  const handleScroll = (event: UIEvent<HTMLDivElement>) =>
+    setScrollTop(event.currentTarget.scrollTop)
 
   const layout = useMemo<Layout>(
     () =>
@@ -90,17 +118,21 @@ export const CategoryCard = ({
       isEditMode={isEditMode}
     >
       <div
-        className={`category-body scrollbar-none absolute z-10 overflow-x-hidden ${
+        className={`category-body absolute z-10 scrollbar-none overflow-x-hidden ${
           // Nothing to scroll to when every tile is already on screen.
           isScrollable
             ? "overflow-y-auto overscroll-contain"
             : "overflow-y-hidden"
         }`}
+        data-overflow={overflow}
+        onScroll={handleScroll}
         style={{
           left: 0,
           right: 0,
           top: PAD,
           height: viewportHeight,
+          maskImage: fadeMask,
+          WebkitMaskImage: fadeMask,
           // Mandatory snapping would fight a tile drag, so it is off while editing.
           scrollSnapType: canScroll ? "y mandatory" : undefined,
         }}
@@ -152,7 +184,6 @@ export const CategoryCard = ({
           })}
         </GridLayout>
       </div>
-
       {isScrollable && (
         <div
           aria-hidden="true"

@@ -187,7 +187,27 @@ describe("CategoryCard geometry", () => {
     expect(
       container.querySelectorAll('.category-body > [aria-hidden="true"]')
     ).toHaveLength(0)
-    expect(container.querySelector('[title$="more rows"]')).toBeNull()
+    expect(container.querySelector(".category-body")).toHaveAttribute(
+      "data-overflow",
+      "none"
+    )
+  })
+
+  it("fades the bottom edge while more rows are hidden below", () => {
+    const { container } = render(
+      <CategoryCard
+        category={category(9)}
+        width={4}
+        rows={2}
+        cell={CELL}
+        tiles={grid(9, 4)}
+      />
+    )
+
+    expect(container.querySelector(".category-body")).toHaveAttribute(
+      "data-overflow",
+      "bottom"
+    )
   })
 
   it("signals the hidden rows outside the tile viewport, so no tile looks clipped", () => {
@@ -258,8 +278,10 @@ describe("CategoryCard geometry", () => {
     expect(box(tileFor("three")).left).toBe(0)
     expect(box(tileFor("one")).left).toBe(Math.round(PITCH))
     expect(box(tileFor("two")).left).toBe(Math.round(2 * PITCH))
-    // One row means nothing to scroll, so no hint and no snapping either.
-    expect(container.querySelector('[title$="more rows"]')).toBeNull()
+    expect(container.querySelector(".category-body")).toHaveAttribute(
+      "data-overflow",
+      "none"
+    )
   })
 
   it("renders the title pill with the category icon", () => {

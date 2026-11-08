@@ -78,6 +78,48 @@ describe("formatEuDateTime", () => {
   })
 })
 
+describe("toRows candidates", () => {
+  it("keeps every version after the headline update as another candidate", () => {
+    const [row] = toRows(
+      SwiezakResponseSchema.parse([
+        {
+          image: "alpine:3.20",
+          pinned: false,
+          status: "up-to-date",
+          minor: ["3.24", "3.23"],
+          patch: ["3.20.9"],
+        },
+      ])
+    )
+    expect(row.update).toEqual({ level: "minor", version: "3.24" })
+    expect(row.otherCandidates).toEqual([
+      { level: "minor", version: "3.23" },
+      { level: "patch", version: "3.20.9" },
+    ])
+  })
+})
+
+describe("toRows deduplication", () => {
+  it("merges images that resolve to the same row and counts them", () => {
+    const image = {
+      pinned: false,
+      status: "up-to-date",
+      minor: ["3.24"],
+    }
+    const rows = toRows(
+      SwiezakResponseSchema.parse([
+        { ...image, image: "alpine:3.20" },
+        { ...image, image: "docker.io/library/alpine:3.20" },
+        { ...image, image: "alpine:3.21" },
+      ])
+    )
+    expect(rows.map((r) => [r.name, r.version, r.count])).toEqual([
+      ["alpine", "3.20", 2],
+      ["alpine", "3.21", 1],
+    ])
+  })
+})
+
 describe("SwiezakResponseSchema", () => {
   it("accepts a live response that omits empty version lists", () => {
     const images = SwiezakResponseSchema.parse(live)

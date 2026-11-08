@@ -1,16 +1,19 @@
 import { ReactNode, useCallback } from "react"
 import {
+  ArrowRight,
   ArrowUp,
   Check,
   LucideIcon,
   RefreshCw,
   TriangleAlert,
 } from "lucide-react"
+import { HoverPopover } from "@/components/HoverPopover"
 import { useWidgetData } from "@/widgets/lib/useWidgetData"
 import type { WidgetProps } from "@/widgets/types"
 import {
   SwiezakResponseSchema,
   SwiezakRow,
+  UpdateCandidate,
   UpdateLevel,
   lastCheckedAt,
   toRows,
@@ -32,6 +35,12 @@ const UPDATE_CLASSES: Record<UpdateLevel, string> = {
   major: "bg-red-500/15 text-red-700 dark:text-red-300",
   minor: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
   patch: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
+}
+
+const UPDATE_TEXT_CLASSES: Record<UpdateLevel, string> = {
+  major: "text-red-600 dark:text-red-300",
+  minor: "text-amber-600 dark:text-amber-300",
+  patch: "text-sky-600 dark:text-sky-300",
 }
 
 const STATUS_CLASSES: Record<string, string> = {
@@ -70,37 +79,76 @@ interface SwiezakRowItemProps {
   row: SwiezakRow
 }
 
+interface OtherCandidatesProps {
+  candidates: UpdateCandidate[]
+}
+
+const OtherCandidates = ({ candidates }: OtherCandidatesProps) => (
+  <div className="flex max-w-64 flex-col gap-1.5">
+    <span className="text-[11px] font-medium text-muted-foreground">
+      Other candidates
+    </span>
+    <div className="flex flex-wrap gap-x-2.5 gap-y-1 font-mono text-xs">
+      {candidates.map(({ level, version }) => (
+        <span
+          key={`${level}:${version}`}
+          title={`${level} update to ${version}`}
+          className={UPDATE_TEXT_CLASSES[level]}
+        >
+          {version}
+        </span>
+      ))}
+    </div>
+  </div>
+)
+
+interface SwiezakRowContentProps {
+  row: SwiezakRow
+}
+
+const SwiezakRowContent = ({ row }: SwiezakRowContentProps) => (
+  <div className="flex flex-col gap-1 @xs:flex-row @xs:items-center @xs:gap-3">
+    <div className="flex min-w-0 flex-1 items-baseline gap-2">
+      <span className="truncate text-sm font-medium">{row.name}</span>
+      <span className="flex shrink-0 items-center gap-1 font-mono text-xs">
+        <span className="text-muted-foreground">{row.version}</span>
+        {row.update && (
+          <>
+            <ArrowRight className="h-3 w-3 text-muted-foreground/70" />
+            <span
+              title={`${row.update.level} update to ${row.update.version}`}
+              className={`font-semibold ${UPDATE_TEXT_CLASSES[row.update.level]}`}
+            >
+              {row.update.version}
+            </span>
+          </>
+        )}
+      </span>
+    </div>
+    {(!row.update || row.status !== "up-to-date") && (
+      <Badge
+        title={row.error}
+        className={
+          STATUS_CLASSES[row.status] ?? "bg-muted text-muted-foreground"
+        }
+      >
+        {formatStatus(row.status)}
+      </Badge>
+    )}
+  </div>
+)
+
 const SwiezakRowItem = ({ row }: SwiezakRowItemProps) => (
-  <li className="flex flex-col gap-1 rounded-md bg-card/60 px-2.5 py-2 @xs:flex-row @xs:items-center @xs:gap-3">
-    <div className="flex min-w-0 flex-1 items-baseline gap-1.5">
-      <span className="truncate text-sm font-medium" title={row.name}>
-        {row.name}
-      </span>
-      <span className="shrink-0 font-mono text-xs text-muted-foreground">
-        {row.version}
-      </span>
-    </div>
-    <div className="flex flex-wrap gap-1">
-      {row.update && (
-        <Badge
-          title={`${row.update.level} update to ${row.update.version}`}
-          className={`pl-0.5 ${UPDATE_CLASSES[row.update.level]}`}
-        >
-          <CircleIcon icon={ArrowUp} />
-          {row.update.version}
-        </Badge>
-      )}
-      {(!row.update || row.status !== "up-to-date") && (
-        <Badge
-          title={row.error}
-          className={
-            STATUS_CLASSES[row.status] ?? "bg-muted text-muted-foreground"
-          }
-        >
-          {formatStatus(row.status)}
-        </Badge>
-      )}
-    </div>
+  <li className="px-1 py-2">
+    {row.otherCandidates.length > 0 ? (
+      <HoverPopover
+        content={<OtherCandidates candidates={row.otherCandidates} />}
+      >
+        <SwiezakRowContent row={row} />
+      </HoverPopover>
+    ) : (
+      <SwiezakRowContent row={row} />
+    )}
   </li>
 )
 
@@ -112,11 +160,14 @@ interface SummaryChip {
   className: string
 }
 
+const countImages = (rows: SwiezakRow[]) =>
+  rows.reduce((total, row) => total + row.count, 0)
+
 const summaryChips = (rows: SwiezakRow[]): SummaryChip[] => {
   const countUpdates = (level: UpdateLevel) =>
-    rows.filter((row) => row.update?.level === level).length
+    countImages(rows.filter((row) => row.update?.level === level))
   const countStatus = (status: string) =>
-    rows.filter((row) => row.status === status).length
+    countImages(rows.filter((row) => row.status === status))
   const chips = [
     ...(["major", "minor", "patch"] as const).map((level) => ({
       key: level,
@@ -141,8 +192,9 @@ const summaryChips = (rows: SwiezakRow[]): SummaryChip[] => {
     },
     {
       key: "up-to-date",
-      count: rows.filter((row) => !row.update && row.status === "up-to-date")
-        .length,
+      count: countImages(
+        rows.filter((row) => !row.update && row.status === "up-to-date")
+      ),
       label: "up to date",
       icon: Check,
       className: STATUS_CLASSES["up-to-date"],
@@ -184,7 +236,7 @@ const SwiezakSummary = ({ rows, checkedAt }: SwiezakSummaryProps) => {
         </Badge>
       )}
       <span className="ml-auto opacity-60">
-        {plural(rows.length, "image")}
+        {plural(countImages(rows), "image")}
         {checkedAt && ` · ${formatEuDateTime(new Date(checkedAt))}`}
       </span>
     </div>
@@ -217,7 +269,7 @@ export const SwiezakWidget = ({ options }: WidgetProps<SwiezakOptions>) => {
   return (
     <div className="@container flex h-full flex-col">
       <SwiezakSummary rows={data.rows} checkedAt={data.checkedAt} />
-      <ul className="scrollbar-none flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto overscroll-contain">
+      <ul className="scrollbar-none flex min-h-0 flex-1 flex-col divide-y divide-foreground/[0.06] overflow-y-auto overscroll-contain">
         {data.rows.map((row) => (
           <SwiezakRowItem key={row.key} row={row} />
         ))}

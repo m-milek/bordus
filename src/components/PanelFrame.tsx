@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { getColorClasses, getSolidColorClasses } from "@/lib/colors"
+import { getCardColorClasses, getPillColorClasses } from "@/lib/colors"
 import { CategoryIcon } from "@/components/CategoryIcon"
 import { PAD, PILL_HEIGHT, blockSize, categoryHeightPx } from "@/lib/grid"
 
@@ -29,7 +29,7 @@ export const PanelFrame = ({
   return (
     <div className="relative h-full w-full">
       <div
-        className={`category-card absolute z-0 rounded-[var(--radius)] border-2 ${getColorClasses(color)}`}
+        className={`category-card absolute z-0 rounded-[var(--radius)] border shadow-sm ${getCardColorClasses(color)}`}
         style={{
           left: -PAD,
           right: -PAD,
@@ -43,7 +43,7 @@ export const PanelFrame = ({
         style={{ top: 0, left: -PAD + 20, maxWidth: innerWidth + 2 * PAD - 40 }}
       >
         <div
-          className={`flex min-w-0 items-center justify-center gap-1.5 rounded-full px-3 shadow-sm ${getSolidColorClasses(
+          className={`flex min-w-0 items-center justify-center gap-1.5 rounded-full px-3 ring-1 ring-foreground/[0.07] ${getPillColorClasses(
             color
           )} ${isEditMode ? "category-drag-handle cursor-grab active:cursor-grabbing" : ""}`}
           style={{ height: PILL_HEIGHT }}

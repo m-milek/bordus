@@ -47,6 +47,7 @@ body {
   --background: rgb(249, 250, 251);
   --foreground: rgb(35, 42, 54);
   --card: rgb(255, 255, 255);
+  --panel: rgb(255, 255, 255);
   --card-foreground: rgb(35, 42, 54);
   --popover: rgb(255, 255, 255);
   --popover-foreground: rgb(35, 42, 54);
@@ -79,7 +80,7 @@ body {
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   --font-serif: Merriweather, serif;
   --font-mono: JetBrains Mono, monospace;
-  --radius: 1.6rem;
+  --radius: 1.25rem;
   --shadow-x: 0px;
   --shadow-y: 4px;
   --shadow-blur: 8px;
@@ -102,6 +103,7 @@ body {
   --background: rgb(20, 25, 37);
   --foreground: rgb(228, 232, 238);
   --card: rgb(35, 42, 54);
+  --panel: rgb(25, 31, 43);
   --card-foreground: rgb(228, 232, 238);
   --popover: rgb(35, 42, 54);
   --popover-foreground: rgb(228, 232, 238);
@@ -275,4 +277,13 @@ body {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.app-background {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+.dark .app-background {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
