@@ -133,14 +133,11 @@ export const loadConfig = async (): Promise<Config> => {
     document.title = config.title
   }
   if (config.favicon) {
-    let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement
-    if (!link) {
-      link = document.createElement("link")
-      link.rel = "icon"
-      document.head.appendChild(link)
-    }
-    link.removeAttribute("type")
+    document.querySelectorAll("link[rel~='icon']").forEach((existing) => existing.remove())
+    const link = document.createElement("link")
+    link.rel = "icon"
     link.href = config.favicon
+    document.head.appendChild(link)
   }
 
   return config
