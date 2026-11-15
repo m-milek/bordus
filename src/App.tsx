@@ -4,6 +4,7 @@ import { DashboardHeader } from "@/components/DashboardHeader"
 import { CategoryGrid } from "@/components/CategoryGrid"
 import { SearchResultsGrid } from "@/components/SearchResultsGrid"
 import { SettingsWidget } from "@/components/SettingsWidget"
+import { VersionFooter } from "@/components/VersionFooter"
 import { useFilteredServices } from "@/hooks/useFilteredServices"
 import { useDashboardLayout } from "@/hooks/useDashboardLayout"
 
@@ -100,6 +101,7 @@ export const App = () => {
             onTileLayoutChange={onTileLayoutChange}
           />
         )}
+        <VersionFooter />
       </div>
     </div>
   )

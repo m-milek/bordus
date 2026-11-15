@@ -21,6 +21,11 @@
  */
 html {
   scrollbar-gutter: stable;
+  background-color: color-mix(in srgb, var(--background), black 4.5%);
+}
+
+html.dark {
+  background-color: color-mix(in srgb, var(--background), white 6.5%);
 }
 
 /* scrollbar-gutter is Safari 18.2+; this reserves the same space without it. */

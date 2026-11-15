@@ -53,6 +53,8 @@ jobs:
           provenance: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ env.VERSION }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
