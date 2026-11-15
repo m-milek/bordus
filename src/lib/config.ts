@@ -133,7 +133,9 @@ export const loadConfig = async (): Promise<Config> => {
     document.title = config.title
   }
   if (config.favicon) {
-    document.querySelectorAll("link[rel~='icon']").forEach((existing) => existing.remove())
+    document
+      .querySelectorAll("link[rel~='icon']")
+      .forEach((existing) => existing.remove())
     const link = document.createElement("link")
     link.rel = "icon"
     link.href = config.favicon
